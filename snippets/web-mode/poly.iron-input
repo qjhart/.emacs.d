@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <input is="iron-input" bind-value="{{..}}">
+# group: polymer
+# key: <input-iron
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<input is="iron-input" bind-value="{{${1:myValue}}}">

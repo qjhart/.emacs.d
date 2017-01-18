@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <paper-toggle-button  checked>..
+# group: polymer
+# key: <paper-toggle-button
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<paper-toggle-button ${1:checked}></paper-toggle-button>

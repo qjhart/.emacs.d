@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: <template is="dom-repeat" ..
+# group: polymer
+# key: <template-dom-repeat
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<template is="dom-repeat" items={{${1:array}}} 
+	as=${2:item} index-as=${3:index}
+	filter="${4:isHandler}" sort="${5:sortHandler}" observe="${6:itemField1 itemField2}">
+	<!-- {{$2}} and {{$3}} can be used in this binding scope -->
+	$0
+</template>

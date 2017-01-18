@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: <form method=".." id=".." action="..">
+# key: <form
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<form method="${1:post}" id="$2" action="${3:url}">
+  $0
+</form>

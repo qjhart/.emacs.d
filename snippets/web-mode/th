@@ -1,0 +1,5 @@
+#name : <th>...</th>
+#group : polymer
+#key: <th
+# --
+<th$1>$2</th>

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <carbon-location route=".." use-hash-as-path>
+# group: polymer
+# key: <carbon-location
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<carbon-location route="{{${1:route}}}" ${2:use-hash-as-path}></carbon-location>

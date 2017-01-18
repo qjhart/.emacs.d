@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: <iron-collapse id="..">content</iron-collapse>
+# group: polymer
+# key: <iron-collapse
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<iron-collapse id="${1:collapse}">
+   $0
+</iron-collapse>
+

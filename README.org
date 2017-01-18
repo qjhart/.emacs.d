@@ -1,0 +1,19 @@
+I have moved my .emacs.d setup from qhart, since they serve such different
+purposes.  This is a mashup of a number of different implemtations.
+
+This is setup with
+
+#+BEGIN_SRC bash
+
+#+END_SRC
+
+** yasnippet
+
+[[https://github.com/joaotavora/yasnippet][yasnippet]] is a great macro setup.  I use both macro packages supplied by
+yassnippet, when you recursively clone the the yasnippet repo.  Additional
+macros are added to ~/.emacs.d/snippets
+
+Add to the setup with:
+#+BEGIN_SRC bash
+git submodule add --recursive https://github.com/joaotavora/yasnippet
+#+END_SRC

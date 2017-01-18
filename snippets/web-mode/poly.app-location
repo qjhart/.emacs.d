@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: <app-location route="{{route}}" use-hash-as-path></app-location>
+# key: <app-location
+# group: polymer
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# --
+<app-location route="{{${1:route}}}" ${2:use-hash-as-path}></app-location>

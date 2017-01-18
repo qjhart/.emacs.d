@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <link rel="import" href="../bower_components/paper-{..}/paper-{..}.html">
+# group: polymer
+# key: <link-paper
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<link rel="import" href="${1:../}bower_components/paper-${2:element}/paper-$2.html">

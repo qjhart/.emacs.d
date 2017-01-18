@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: <form is="iron-form" id=".." method=".." action="..">
+# group: polymer
+# key: <form-iron
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<form is="iron-form" id="${1:form}" method="${2:post}" action="${3:/form/handler}">
+	$0
+</form>
+

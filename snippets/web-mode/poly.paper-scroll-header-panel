@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: <paper-scroll-header-panel condenses class="flex">..
+# group: polymer
+# key: <paper-scroll-header-panel
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<paper-scroll-header-panel ${1:condenses} class="flex">
+	<paper-toolbar>
+		<div>${2:My App}</div>
+	</paper-toolbar>
+	<div>${3:Page content}</div>
+</paper-scroll-header-panel>

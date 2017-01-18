@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <link rel="import" href="./.html">
+# group: polymer
+# key: <link-app
+# contributor: Quinn Hart (qjhart@gmail.com)
+# binding:
+# --
+<link rel="import" href="${1:./in}.html">

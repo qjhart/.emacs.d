@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <paper-spinner active>..
+# group: polymer
+# key: <paper-spinner
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<paper-spinner ${1:active}></paper-spinner>

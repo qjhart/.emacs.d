@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <iron-meta key="..">
+# group: polymer
+# key: <iron-meta
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<iron-meta key="${1:info}"></iron-meta>

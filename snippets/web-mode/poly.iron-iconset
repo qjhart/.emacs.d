@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: <iron-iconset name=".." src=".." icons="">
+# group: polymer
+# key: <iron-iconset
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<iron-iconset name="${1:my-icons}" src="${2:my-icons.png}" width="${3:96}" size="${4:24}"
+              icons="${5:location place starta stopb bus car train walk}">
+</iron-iconset>
+

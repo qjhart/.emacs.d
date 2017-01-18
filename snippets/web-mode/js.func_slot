@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: name: function (){},
+# group: js
+# key: f\:
+# contributor: Quinn Hart <qjhart@gmail.com>
+# binding:
+# --
+${1:name}: function($2){
+  $0
+},

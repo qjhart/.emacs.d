@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <paper-tab>..</paper-tab>
+# group: polymer
+# key: <paper-tab
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<paper-tab>$0</paper-tab>

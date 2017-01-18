@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: <paper-card heading=".."  image=".."
+# group: polymer
+# key: <paper-card
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<paper-card heading="${1:Card title}" image="${3:/path/to/image.png}" elevation="${4:1}" animated-shadow="${5:false}">
+  <div class="card-content">$6</div>
+  <div class="card-actions">
+    $7
+  </div>
+</paper-card>

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <link rel="import" href="bower_components/iron-{..}/iron-{..}.html">
+# group: polymer
+# key: <link-iron
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<link rel="import" href="${1:../}bower_components/iron-${2:element}/iron-$2.html">

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: <iron-image src=".." preload sizing="">
+# group: polymer
+# key: <iron-image
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<iron-image src="$1" ${2:preload} sizing="${3:cover}"></iron-image>

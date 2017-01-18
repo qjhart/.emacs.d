@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: <iron-autogrow-textarea><textarea>..
+# group: polymer
+# key: <iron-autogrow-textarea
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<iron-autogrow-textarea>
+	<textarea></textarea>
+</iron-autogrow-textarea>

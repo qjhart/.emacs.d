@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: function (){}
+# group: js
+# key: function
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+function($1){
+  $0
+}

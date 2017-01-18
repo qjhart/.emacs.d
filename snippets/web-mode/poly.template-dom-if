@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: <template is="dom-if" if="..">..
+# group: polymer
+# key: <template-dom-if
+# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
+# binding: 
+# --
+<template is="dom-if" if={{${1:isEnabled}}}>
+	$0
+</template>
