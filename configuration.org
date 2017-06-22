@@ -746,7 +746,7 @@ Allow =babel= to evaluate Emacs lisp, Ruby, dot, or Gnuplot code.
    'org-babel-load-languages
    '((emacs-lisp . t)
      (sql . t)
-;;     (shell . t)
+     (shell . t)
      (ruby . t)
      (dot . t)
      (sparql . t)

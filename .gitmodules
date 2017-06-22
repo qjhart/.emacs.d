@@ -4,3 +4,6 @@
 [submodule "cask"]
 	path = cask
 	url = https://github.com/cask/cask.git
+[submodule "yasnippet"]
+	path = yasnippet
+	url = https://github.com/joaotavora/yasnippet
