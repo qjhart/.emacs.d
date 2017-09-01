@@ -1,9 +1,9 @@
 ;; .emacs.d/init.el
 
 (require 'cask "~/.emacs.d/.cask/cask.el")
-  (cask-initialize)
-  (require 'pallet)
-  (pallet-mode t)
+(cask-initialize)
+(require 'pallet)
+(pallet-mode t)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,

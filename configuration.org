@@ -1,6 +1,8 @@
 #+TITLE: Emacs configuration
 #+SETUPFILE: /home/quinn/org-html-themes/setup/theme-bigblow.setup
 
+This example was copied from https://github.com/hrs/dotfiles.  Which is pretty terrific.
+
 This is my emacs configuration file, it's the strategy from the [[https://github.com/hrs/dotfiles][dotfiles repo]]
 and I used that as my template.  I also needed to modify the init.el script:
 
@@ -962,7 +964,7 @@ Always enable =abbrev-mode=:
   (setq ido-enable-flex-matching t)
   (setq ido-everywhere t)
   (ido-mode 1)
-  (ido-ubiquitous)
+  (ido-ubiquitous-mode t)
 ;;  (flx-ido-mode 1) ; better/faster matching
   (setq ido-create-new-buffer 'always) ; don't confirm to create new buffers
   (ido-vertical-mode 1)
