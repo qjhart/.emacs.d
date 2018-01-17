@@ -3,6 +3,7 @@
 
 (depends-on "ag")
 (depends-on "auctex")
+(depends-on "bats-mode")
 (depends-on "cask")
 (depends-on "chruby")
 (depends-on "cm-mode")
@@ -59,6 +60,7 @@
 (depends-on "package-build")
 (depends-on "pallet")
 (depends-on "paredit")
+(depends-on "plantuml-mode")
 (depends-on "projectile")
 (depends-on "projectile-rails")
 (depends-on "python-mode")
