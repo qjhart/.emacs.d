@@ -55,6 +55,7 @@
 (depends-on "muttrc-mode")
 (depends-on "org")
 (depends-on "org-bullets")
+(depends-on "org-page")
 (depends-on "ox-asciidoc")
 (depends-on "ox-twbs")
 (depends-on "package-build")

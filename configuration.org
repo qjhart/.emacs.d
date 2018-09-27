@@ -14,6 +14,13 @@ and I used that as my template.  I also needed to modify the init.el script:
 (org-babel-load-file "~/.emacs.d/configuration.org")
 #+END_EXAMPLE
 
+#+BEGIN_SRC emacs-lisp
+(require 'twig-mode "~/.emacs.d/twig-mode.el")
+#+END_SRC
+
+#+RESULTS:
+: twig-mode
+
 * Use sensible-defaults.el
 
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
@@ -479,7 +486,6 @@ the tests from any buffer.
 #+END_SRC
 
 
-
 * Terminal
 
 I use =multi-term= to manage my shell sessions.
@@ -523,50 +529,27 @@ I add a bunch of hooks to =term-mode=:
               (setq yas-dont-activate t)))
 #+END_SRC
 
-
 * Publishing and task management with Org-mode
 
-There seems to be a bad issue with the some of the variables in org-mode that
-haven't been properly addressed.  So, I need to add these additonal regular
-expressions to get this to work.
-
-I want to publish all my org-mode notes into a single html location, and I'd
-like that to work recursively.  I've found these notes online: [[http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html][tutorial]]. And I
-also found these [[https://github.com/fniessen/org-html-themes][great themes]].  In the end, I hope to eliminate most of the
-other MD style publishing for this more basic setup.
-
+** Org-Page
 
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org
-    ;; org problems
-    (setq org-planning-line-re "^[    ]*\\(\\(?:CLOSED\\|DEADLINE\\|SCHEDULED\\):\\)")
-    (setq org-clock-line-re "^[    ]*CLOCK:")
-  (setq org-publish-project-alist
-  '(("org-notes"
-   :base-directory "~/qjhart.github.io/org/"
-   :base-extension "org"
-   :publishing-directory "~/qjhart.github.io/htdocs/"
-   :recursive t
-   :publishing-function org-html-publish-to-html
-   :headline-levels 4             ; Just the default for this project.
-   :auto-preamble t
-   )
-  ("org-static"
-   :base-directory "~/qjhart.github.io/org/"
-   :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-   :publishing-directory "~/public_html/"
-   :recursive t
-   :publishing-function org-publish-attachment
-   )
-  ("org" :components ("org-notes" "org-static"))
-    ))
-)
+(require 'org-page)
+(setq op/repository-directory "~/qjhart.github.io")
+(setq op/site-domain "https://qjhart.github.io/")
+(setq op/personal-github-link "qjhart")
+(setq op/site-main-title "Quinn Hart")
+(setq op/site-sub-title "University of California, Davis")
+;;; for commenting, you can choose either disqus, duoshuo or hashover
+;;;(setq op/personal-disqus-shortname "your_disqus_shortname")
+;;;(setq op/personal-duoshuo-shortname "your_duoshuo_shortname")
+;;;(setq op/hashover-comments t)
+;;; the configuration below are optional
+;;; (setq op/personal-google-analytics-id "your_google_analytics_id")
 #+END_SRC
 
 #+RESULTS:
-| org-notes  | :base-directory | ~/qjhart.github.io/org/ | :base-extension | org  | :publishing-directory | ~/qjhart.github.io/htdocs/ | :recursive | t    | :publishing-function | org-html-publish-to-html | :headline-levels |   4 | :auto-preamble        | t              |            |   |                      |                        |
-| org-static | :base-directory | ~/qjhart.github.io/org/ | :base-extension | css\ | js\                   | png\                       | jpg\       | gif\ | pdf\                 | mp3\                     | ogg\             | swf | :publishing-directory | ~/public_html/ | :recursive | t | :publishing-function | org-publish-attachment |
-| org        | :components     | (org-notes org-static)  |                 |      |                       |                            |            |      |                      |                          |                  |     |                       |                |            |   |                      |                        |
+: University of California, Davis
 
 ** Display preferences
 
