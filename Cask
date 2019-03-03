@@ -50,6 +50,7 @@
 (depends-on "markdown-mode")
 (depends-on "multi-term")
 (depends-on "multiple-cursors")
+(depends-on "ob-http")
 (depends-on "org")
 (depends-on "org-bullets")
 (depends-on "ox-asciidoc")
