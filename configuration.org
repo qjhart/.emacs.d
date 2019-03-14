@@ -670,12 +670,16 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 
           ("l" "Today I Learned..."
            entry
-           (file+datetree (org-file-path "til.org"))
+           (file+olp+datetree "~/org/til.org")
           "* %?\n")
 
-;;          ("r" "Reading"
-;;           checkitem
-;;           (file (org-file-path "to-read.org")))
+        ("f" "Finished book"
+         table-line (file "~/org/books-read.org")
+         "| %^{Title} | %^{Author} | %u |")
+
+        ("r" "Reading"
+         checkitem
+         (file "~/org/to-read.org"))
 
           ("t" "Todo"
            entry
@@ -684,8 +688,10 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 #+END_SRC
 
 #+RESULTS:
-| l | Today I Learned... | entry | (file+datetree (org-file-path til.org)) | * %?      |
-| t | Todo               | entry | (file org-index-file)                   | * TODO %? |
+| l | Today I Learned... | entry      | (file+olp+datetree ~/org/til.org) | * %?      |           |            |    |   |
+| f | Finished book      | table-line | (file ~/org/books-read.org)       |           | %^{Title} | %^{Author} | %u |   |
+| r | Reading            | checkitem  | (file ~/org/to-read.org)          |           |           |            |    |   |
+| t | Todo               | entry      | (file org-index-file)             | * TODO %? |           |            |    |   |
 
 When I'm starting an org capture template I'd like to begin in insert mode. I'm
 opening it up in order to start typing something, so this skips a step.
