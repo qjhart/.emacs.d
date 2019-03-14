@@ -727,20 +727,21 @@ Allow export to markdown and beamer (for presentations).
 Allow =babel= to evaluate Emacs lisp, Ruby, dot, or Gnuplot code.
 
 #+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (sql . t)
-     (shell . t)
-     (ruby . t)
-     (dot . t)
-     (sparql . t)
-     (plantuml . t)
-     (js . t)
-     (gnuplot . t)))
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((emacs-lisp . t)
+		 (sql . t)
+		 (shell . t)
+		 (ruby . t)
+		 (dot . t)
+		 (sparql . t)
+		 (http . t)
+		 (plantuml . t)
+		 (js . t)
+		 (gnuplot . t)))
 
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/share/plantuml/plantuml.jar"))
+	(setq org-plantuml-jar-path
+				(expand-file-name "/usr/share/plantuml/plantuml.jar"))
 #+END_SRC
 
 #+RESULTS:
@@ -972,6 +973,8 @@ Want to be able to use sparql in org-mode, but in sparql-files as well.
   (require `sparql-mode)
   (hrs/add-auto-mode 'sparql-mode "\\.sparql$")
 #+END_SRC
+
+#+RESULTS:
 
 
 ** Editing with Markdown
