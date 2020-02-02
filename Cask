@@ -42,6 +42,7 @@
 (depends-on "htmlize")
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
+(depends-on "indium")
 (depends-on "inf-ruby")
 (depends-on "inflections")
 (depends-on "js3-mode")
