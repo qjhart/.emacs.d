@@ -21,6 +21,18 @@ and I used that as my template.  I also needed to modify the init.el script:
 #+RESULTS:
 : twig-mode
 
+* Shell
+
+Use my .bashrc PATH
+
+#+BEGIN_SRC emacs-lisp
+(exec-path-from-shell-initialize)
+#+END_SRC
+
+#+RESULTS:
+: ((MANPATH) (PATH . /home/quinn/.local/bin:/home/quinn/google-cloud-sdk/bin:/home/quinn/.cargo/bin:/home/quinn/.local/bin:/home/quinn/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/quinn/apache-jena-3.9.0/bin/sparql))
+
+
 * Use sensible-defaults.el
 
 Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
