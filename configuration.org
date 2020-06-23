@@ -292,6 +292,8 @@ I don't usually use the menu or scroll bar, and they take up useful space.
 ** Custom solarized-dark theme
 
 #+BEGIN_SRC emacs-lisp
+  (use-package solarized-theme
+  :ensure t)
   (when window-system
     (setq solarized-use-variable-pitch nil)
     (setq solarized-height-plus-1 1.0)
@@ -733,7 +735,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 If I ever am programming php TWIGS
 
 #+BEGIN_SRC emacs-lisp
-(require 'twig-mode "~/.emacs.d/resources/twig-mode.el")
+;(require 'twig-mode "~/.emacs.d/resources/twig-mode.el")
 #+END_SRC
 
 #+RESULTS:
