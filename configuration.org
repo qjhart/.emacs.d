@@ -85,10 +85,13 @@ settings.
   (load-file "~/.emacs.d/plugins/sensible-defaults.el/sensible-defaults.el")
   (sensible-defaults/use-all-settings)
   (sensible-defaults/use-all-keybindings)
+; Double space users rule
+  (setq sentence-end-double-space t)
+
 #+END_SRC
 
 #+RESULTS:
-: text-scale-decrease
+: t
 
 * Shell
 When try executing program I want to use my .bashrc PATH
@@ -684,9 +687,10 @@ Don't compile the current file every time I save.
 
 ** JavaScript and CoffeeScript
 
-Install =coffee-mode= from editing CoffeeScript code.
+Use js2-mode for javascript.  Install =coffee-mode= from editing CoffeeScript code.
 
 #+begin_src emacs-lisp
+  (use-package js2-mode)
   (use-package coffee-mode)
 #+end_src
 
@@ -817,10 +821,13 @@ Note, [[https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/][Move to Ivy]] h
     (setq ivy-re-builders-alist
           '((swiper . ivy--regex-plus)
             (t . ivy--regex-fuzzy))))
+    ; C-j terminates, RET continues in directory
+    (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+    (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
 #+end_src
 
 #+RESULTS:
-: swiper
+: ivy-alt-done
 
 ** Always kill current buffer
 
@@ -872,6 +879,18 @@ Want to be able to use sparql in org-mode, but in sparql-files as well.
 ;; (use-package cl)
  (use-package sparql-mode)
   (hrs/add-auto-mode 'sparql-mode "\\.sparql$")
+#+END_SRC
+
+#+RESULTS:
+
+** Editing JQ Queries
+
+#+BEGIN_SRC emacs-lisp
+(use-package jq-mode)
+(hrs/add-auto-mode `jq-mode "\\.jq$")
+(with-eval-after-load "json-mode"
+  (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)
+)
 #+END_SRC
 
 #+RESULTS:
@@ -1066,6 +1085,7 @@ Allow =babel= to evaluate Emacs lisp, Ruby, dot, or Gnuplot code.
      (shell . t)
      (ruby . t)
      (dot . t)
+     (jq  . t)
      (sparql . t)
      (http . t)
      (plantuml . t)
