@@ -94,6 +94,18 @@ settings.
 : t
 
 * Shell
+
+Make sure to include shellcheck
+#+BEGIN_SRC emacs-lisp
+(use-package flymake-shellcheck
+  :commands flymake-shellcheck-load
+  :init
+  (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
+#+END_SRC
+
+#+RESULTS:
+| flymake-shellcheck-load | (lambda nil (setq sh-basic-offset 2 sh-indentation 2)) |
+
 When try executing program I want to use my .bashrc PATH
 
 #+BEGIN_SRC emacs-lisp
@@ -533,7 +545,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     ("C-x g" . magit-status)
 
     :config
-    (use-package evil-magit)
+    ;; (use-package evil-magit)
     (use-package with-editor)
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
@@ -609,17 +621,6 @@ I like tree-based undo management. I only rarely need it, but when I do, oh boy.
   (use-package undo-tree)
 #+end_src
 * Programming customizations
-** Default Tab Width
-I like shallow indentation, but tabs are displayed as 8 characters by default.
-This reduces that.
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default tab-width 2)
-#+END_SRC
-
-#+RESULTS:
-: 2
-
 ** Use Editorconfig
 
 #+BEGIN_SRC emacs-lisp
@@ -632,20 +633,17 @@ This reduces that.
 #+RESULTS:
 : t
 
-
-** Add N3 programming
-
-Use n3 mode for when we are accessing n3 or owl files.
+** Docker
+I am looking into using the lsb-mode package in order to continue my code
+editing, in particular for bash scripting as a first test.  One way to run the
+lsb-server, is to mount a docker instance, and run it whenever you are editing
+your file.
 
 #+BEGIN_SRC emacs-lisp
-  (autoload 'n3-mode "n3-mode" "Major mode for OWL or N3 files" t)
-	(add-hook 'n3-mode-hook
-						'turn-on-font-lock)
-	(hrs/add-auto-mode 'n3-mode "\\.n3$")
-	(hrs/add-auto-mode 'n3-mode "\\.owl$")
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
 #+END_SRC
-
-#+RESULTS:
 
 ** Use Multiple Cursors
 
@@ -662,6 +660,100 @@ Use n3 mode for when we are accessing n3 or owl files.
 
 #+RESULTS:
 : t
+** Default Tab Width
+I like shallow indentation, but tabs are displayed as 8 characters by default.
+This reduces that.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default tab-width 2)
+#+END_SRC
+
+#+RESULTS:
+: 2
+
+** SPARQL Mode
+Want to be able to use sparql in org-mode, but in sparql-files as well.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sparql-mode)
+   (hrs/add-auto-mode 'sparql-mode "\\.sparql$")
+   (hrs/add-auto-mode 'sparql-mode "\\.ru$")
+   (hrs/add-auto-mode 'sparql-mode "\\.rq$")
+
+#+END_SRC
+
+#+RESULTS:
+
+** Add N3 programming
+
+Use n3 mode for when we are accessing n3 or owl files.
+
+#+BEGIN_SRC emacs-lisp
+  (autoload 'n3-mode "n3-mode" "Major mode for OWL or N3 files" t)
+	(add-hook 'n3-mode-hook
+						'turn-on-font-lock)
+	(hrs/add-auto-mode 'n3-mode "\\.n3$")
+	(hrs/add-auto-mode 'n3-mode "\\.owl$")
+#+END_SRC
+
+#+RESULTS:
+
+** TTL Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package ttl-mode)
+    (hrs/add-auto-mode 'ttl-mode "\\.ttl$")
+#+END_SRC
+
+#+RESULTS:
+
+** JSON Mode
+We want a nice mode for JSON, parsing.
+#+BEGIN_SRC emacs-lisp
+  (use-package json-mode)
+   (hrs/add-auto-mode 'json-mode "\\.json$")
+#+END_SRC
+
+#+RESULTS:
+
+** JQ Command Line
+#+BEGIN_SRC emacs-lisp
+(use-package jq-mode)
+(hrs/add-auto-mode `jq-mode "\\.jq$")
+(with-eval-after-load "json-mode"
+  (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)
+)
+#+END_SRC
+
+#+RESULTS:
+
+** YAML Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode)
+   (hrs/add-auto-mode 'yaml-mode "\\.yml$")
+   (hrs/add-auto-mode 'yaml-mode "\\.yaml$")
+#+END_SRC
+
+** Markdown
+
+Because I can't always use =org=.
+
+I'd like spell-checking running when editing Markdown.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'gfm-mode-hook 'flyspell-mode)
+#+END_SRC
+
+Associate =.md= files with GitHub-flavored Markdown.
+
+#+BEGIN_SRC emacs-lisp
+  (hrs/add-auto-mode 'gfm-mode "\\.md$")
+#+END_SRC
+
+Use =pandoc= to render the results.
+
+#+BEGIN_SRC emacs-lisp
+  (setq markdown-command "pandoc --standalone --mathjax --from=markdown")
+#+END_SRC
 
 ** CSS and Sass
 
@@ -705,6 +797,17 @@ Indent with 2 spaces.
                     sh-indentation 2)))
 #+END_SRC
 
+** TWIG Mode
+
+If I ever am programming php TWIGS
+
+#+BEGIN_SRC emacs-lisp
+(require 'twig-mode "~/.emacs.d/resources/twig-mode.el")
+#+END_SRC
+
+#+RESULTS:
+: twig-mode
+
 ** =web-mode=
 
 If I'm in =web-mode=, I'd like to:
@@ -732,16 +835,6 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
    "\\.rhtml$")
 #+END_SRC
 
-** TWIG Mode
-
-If I ever am programming php TWIGS
-
-#+BEGIN_SRC emacs-lisp
-(require 'twig-mode "~/.emacs.d/resources/twig-mode.el")
-#+END_SRC
-
-#+RESULTS:
-: twig-mode
 
 * Terminal
 
@@ -869,58 +962,15 @@ at the correct indentation for Python).
   (setq yas-indent-line 'auto)
 #+end_src
 
-** Editing SPARQL
-
-Want to be able to use sparql in org-mode, but in sparql-files as well.
+** Indent-Tools
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package cl)
- (use-package sparql-mode)
-  (hrs/add-auto-mode 'sparql-mode "\\.sparql$")
-#+END_SRC
-
-#+RESULTS:
-
-** Editing JQ Queries
-
-#+BEGIN_SRC emacs-lisp
-(use-package jq-mode)
-(hrs/add-auto-mode `jq-mode "\\.jq$")
-(with-eval-after-load "json-mode"
-  (define-key json-mode-map (kbd "C-c C-j") #'jq-interactively)
+(use-package indent-tools)
+(global-set-key (kbd "C-c >") 'indent-tools-hydra/body)
+(add-hook 'yaml-mode-hook
+ (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
 )
-#+END_SRC
 
-#+RESULTS:
-
-** Editing TTL
-#+BEGIN_SRC emacs-lisp
-  (use-package ttl-mode)
-    (hrs/add-auto-mode 'ttl-mode "\\.ttl$")
-#+END_SRC
-
-#+RESULTS:
-
-** Editing with Markdown
-
-Because I can't always use =org=.
-
-I'd like spell-checking running when editing Markdown.
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'gfm-mode-hook 'flyspell-mode)
-#+END_SRC
-
-Associate =.md= files with GitHub-flavored Markdown.
-
-#+BEGIN_SRC emacs-lisp
-  (hrs/add-auto-mode 'gfm-mode "\\.md$")
-#+END_SRC
-
-Use =pandoc= to render the results.
-
-#+BEGIN_SRC emacs-lisp
-  (setq markdown-command "pandoc --standalone --mathjax --from=markdown")
 #+END_SRC
 
 ** Wrap paragraphs automatically
