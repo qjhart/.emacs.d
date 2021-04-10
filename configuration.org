@@ -799,17 +799,6 @@ Indent with 2 spaces.
                     sh-indentation 2)))
 #+END_SRC
 
-** TWIG Mode
-
-If I ever am programming php TWIGS
-
-#+BEGIN_SRC emacs-lisp
-(require 'twig-mode "~/.emacs.d/resources/twig-mode.el")
-#+END_SRC
-
-#+RESULTS:
-: twig-mode
-
 ** =web-mode=
 
 If I'm in =web-mode=, I'd like to:
