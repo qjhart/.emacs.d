@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <iron-localstorage name=".." value="..">
-# group: polymer
-# key: <iron-localstorage
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<iron-localstorage name="${1:my-app-storage}" value="{{${0:value}}}"></iron-localstorage>

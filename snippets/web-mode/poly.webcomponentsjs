@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <script src="../webcomponentsjs-lite.js>
-# group: polymer
-# key: <script-webcomponentsjs
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<script src="${0:../bower_components}/webcomponentsjs/webcomponents-lite.js"></script>

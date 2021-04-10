@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <iron-doc-viewer description="..">
-# group: polymer
-# key: <iron-doc-viewer
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<iron-doc-viewer descriptor="{{${1:elementDescriptor}}}"></iron-doc-viewer>

@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <paper-radio-button>
-# group: polymer
-# key: <paper-radio-button
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<paper-radio-button></paper-radio-button>

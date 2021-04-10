@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <link rel="import" href="bower_components/{..}.html">
-# group: polymer
-# key: <link-bower
-# contributor: Quinn Hart (qjhart@gmail.com)
-# binding:
-# --
-<link rel="import" href="${1:../}bower_components/${2:element}.html">

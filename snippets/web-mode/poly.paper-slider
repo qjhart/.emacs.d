@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <paper-slider min=".." max=".." value="..">
-# group: polymer
-# key: <paper-slider
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<paper-slider min="${1:10}" max="${2:200}" value="${3:110}"></paper-slider>

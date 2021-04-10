@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <paper-icon-button icon="">
-# group: polymer
-# key: <paper-icon-button
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<paper-icon-button icon="$0"></paper-icon-button>

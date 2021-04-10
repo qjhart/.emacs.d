@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <app-route route=".." pattern=".." data=".." tail="..">
-# group: polymer
-# key: <app-route
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<app-route route="{{${1:route}}}" pattern="/:${2:page}" data="{{${3:data}}}" tail="{{${4:tail}}}"></app-route>

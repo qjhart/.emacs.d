@@ -1,42 +1,10 @@
 I have moved my .emacs.d setup from qhart, since they serve such different
 purposes.  This is a mashup of a number of different implmentations.
 
-* Adding to a new server
-
 This is setup by clone, but remember to use `--recurse-submodules` to get the
-submodules.  Otherwise, you'll have to `git submodule init; git submodule update`.
+submodules.  Otherwise, you'll have to `git submodule init; git submodule
+update`.  Currently, I use sensible-defaults from hrs as a submodule.
 
 #+BEGIN_SRC bash
 git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
-cd ~/.emacs.d
-cask/bin/cask
-#+END_SRC
-
-Everytime, I do this however, I am [[https://emacs.stackexchange.com/questions/28441/org-mode-9-unable-to-eval-code-blocks][unable to evaluate code blocks]].  Following
-the notes from this link I do this:
-
-#+BEGIN_SRC bash
-cd ~/.emacs.d
-rm .cask/25.2/elpa/org-9.1.13/*.elc
-#+END_SRC
-
-This attempt to recompile those files doesn't seem to work.
-#+BEGIN_SRC emacs-lisp
-  (byte-recompile-directory "~/.emacs.d/.cask/25.2/elpa/org-9.1.13")
-#+END_SRC
-
-#+RESULTS:
-: Done (Total of 0 files compiled, 122 skipped)
-
-* Other Submodules
-
-** yasnippet
-
-[[https://github.com/joaotavora/yasnippet][yasnippet]] is a great macro setup.  I use both macro packages supplied by
-yassnippet, when you recursively clone the the yasnippet repo.  Additional
-macros are added to ~/.emacs.d/snippets
-
-Add to the setup with:
-#+BEGIN_SRC bash
-git submodule add --recursive https://github.com/joaotavora/yasnippet
 #+END_SRC

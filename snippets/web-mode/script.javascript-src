@@ -1,4 +1,0 @@
-#name :<script type="text/javascript" src="..."></script>
-#key: <script-javascript-src
-# --
-<script type="text/javascript" src="$1"></script>

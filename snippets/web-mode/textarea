@@ -1,5 +1,0 @@
-#name : <textarea name=".." id=".." rows="" cols=""></textarea>
-#key: <textarea
-#group: polymer
-# --
-<textarea name="$1" id="$2" rows="$3" cols="$4" tabindex="$5"></textarea>

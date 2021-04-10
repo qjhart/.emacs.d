@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: <link rel="import" href="../polymer/polymer.html">
-# group: polymer
-# key: <link-polymer
-# contributor: Vijayendra Bapte (vijayendra.bapte@gmail.com)
-# binding: 
-# --
-<link rel="import" href="${1:../}polymer/polymer.html">
