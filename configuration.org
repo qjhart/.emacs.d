@@ -504,22 +504,6 @@ Use =M-/= for completion.
   (global-set-key (kbd "M-/") 'company-complete-common)
 #+end_src
 
-** =dumb-jump=
-
-The =dumb-jump= package works well enough in a [[https://github.com/jacktasia/dumb-jump#supported-languages][ton of environments]], and it
-doesn't require any additional setup. I've bound its most useful command to
-=M-.=.
-
-#+begin_src emacs-lisp
-  (use-package dumb-jump
-    :config
-    (define-key evil-normal-state-map (kbd "M-.") 'dumb-jump-go)
-    (setq dumb-jump-selector 'ivy))
-#+end_src
-
-#+RESULTS:
-| use-package | dumb-jump/:config: Symbol’s value as variable is void: evil-normal-state-map | :error | nil |
-
 ** =flycheck=
 
  #+begin_src emacs-lisp
@@ -555,7 +539,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
 
-    (add-hook 'with-editor-mode-hook 'evil-insert-state))
+;;    (add-hook 'with-editor-mode-hook 'evil-insert-state))
 #+end_src
 
 I've been playing around with the newly-released =forge= for managing GitHub PRs
