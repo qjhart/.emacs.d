@@ -33,13 +33,6 @@ Always compile packages, and use the newest version available.
   (setq load-prefer-newer t)
 #+end_src
 
-Disable TLS 1.3; ELPA has higher standards. That'll be the default in Emacs
-26.3, I think, but I'm not there yet.
-
-#+begin_src emacs-lisp
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-#+end_src
-
 * Set personal information
 ** Me
 #+BEGIN_SRC emacs-lisp
@@ -144,14 +137,15 @@ number of days.
 Use =evil=.
 
 #+begin_src emacs-lisp
-(use-package undo-tree)
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-  (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1))
+  (use-package undo-tree)
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
+    :config
+;;    (evil-mode 1)
+  )
 #+end_src
 
 
@@ -349,13 +343,22 @@ I'd rather skip it.
 #+begin_src emacs-lisp
    (use-package minions
      :config
-     (setq minions-mode-line-lighter ""
-           minions-mode-line-delimiters '("" . ""))
+;;     (setq minions-mode-line-lighter ""
+;;           minions-mode-line-delimiters '("" . ""))
      (minions-mode 1))
 #+end_src
 
 #+RESULTS:
 : t
+
+** Add the last keycast to the modeline
+
+#+begin_src emacs-lisp
+(use-package keycast
+:ensure t)
+#+end_src
+
+#+RESULTS:
 
 ** Set default font and configure font resizing
 
@@ -941,26 +944,39 @@ Assume that I always want to kill the current buffer when hitting =C-x k=.
 
 ** Configure =yasnippet=
 
-#+begin_src emacs-lisp
-  (use-package yasnippet)
-  (use-package yasnippet-snippets)
-#+end_src
-
-I keep my snippets in =~/.emacs/my-snippets=, and I always want =yasnippet=
-enabled.
-
-#+begin_src emacs-lisp
-  (setq yas-snippet-dirs '("~/.emacs.d/my-snippets"))
-  (yas-global-mode 1)
-#+end_src
-
 I /don’t/ want =yas= to automatically indent the snippets it inserts. Sometimes
 this looks pretty bad (when indenting org-mode, for example, or trying to guess
 at the correct indentation for Python).
 
 #+begin_src emacs-lisp
-  (setq yas-indent-line 'auto)
+      (use-package yasnippet-snippets
+      :ensure t)
+            (use-package yasnippet
+              :ensure t
+              :config (yas-global-mode 1)
+                      (setq yas-indent-line `auto))
+
 #+end_src
+
+#+RESULTS:
+: t
+
+** Quelpa
+
+#+begin_src emacs-lisp
+  (use-package quelpa)
+#+end_src
+
+*** Sketch Mode
+
+#+begin_src emacs-lisp
+;;(quelpa '(sketch-mode :repo "dalanicolai/sketch-mode" :fetcher github))
+;;(use-package sketch-mode
+;;  :defer t)
+#+end_src
+
+#+RESULTS:
+
 
 ** Indent-Tools
 
@@ -1067,8 +1083,6 @@ makes that automatic.
 
 Enable [[https://github.com/hrs/engine-mode][engine-mode]] and define a few useful engines.
 
-#+BEGIN_SRC emacs-lisp
-
 * Publishing and task management with Org-mode
 
 #+begin_src emacs-lisp
@@ -1172,6 +1186,25 @@ when exporting.
 #+begin_src emacs-lisp
   (setq org-export-with-smart-quotes t)
 #+end_src
+
+** Org-Roam
+
+#+begin_src emacs-lisp
+(use-package org-roam
+:ensure t
+:init
+(setq org-roam-v2-ack t)
+:custom
+(org-roam-directory "~/org-roam")
+:bind (("C-c n l" . org-roam-buffer-toggle)
+("C-c n f" . org-roam-node-find)
+("C-c n i" . org-roam-node-insert))
+:config
+(org-roam-setup))
+#+end_src
+
+#+RESULTS:
+: org-roam-node-insert
 
 * =dired=
 
