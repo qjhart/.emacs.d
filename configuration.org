@@ -539,7 +539,8 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
 
-;;    (add-hook 'with-editor-mode-hook 'evil-insert-state))
+;;    (add-hook 'with-editor-mode-hook 'evil-insert-state)
+   )
 #+end_src
 
 I've been playing around with the newly-released =forge= for managing GitHub PRs
