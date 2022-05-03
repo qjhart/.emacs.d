@@ -1,0 +1,15 @@
+* Personal Information
+
+Copy something like this to me.org for that to get read on
+initialization.
+
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Quinn Hart"
+        user-mail-address "qjhart@ucdavis.edu"
+        calendar-latitude 38.55
+        calendar-longitude -121.75
+        calendar-location-name "Davis, CA")
+#+END_SRC
+
+
+

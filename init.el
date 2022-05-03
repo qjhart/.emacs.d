@@ -15,4 +15,10 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(org-babel-load-file "~/.emacs.d/configuration.org")
+;; Load Personal information
+(let ((me "~/.emacs.d/me.org"))
+	(when (file-exists-p me)
+	(org-babel-load-file me)
+	))
+
+(org-babel-load-file "~/.emacs.d/README.org")

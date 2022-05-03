@@ -1,10 +1,83 @@
-I have moved my .emacs.d setup from qhart, since they serve such different
-purposes.  This is a mashup of a number of different implmentations.
+#+TITLE: Emacs configuration
 
-This is setup by clone, but remember to use `--recurse-submodules` to get the
-submodules.  Otherwise, you'll have to `git submodule init; git submodule
-update`.  Currently, I use sensible-defaults from hrs as a submodule.
+This is my emacs configuration file, it's the strategy from the
+https://github.com/hrs/dotfiles. Which is pretty terrific. I also got
+inspiration from https://github.com/gjstein/emacs.d.  That's where I
+decided to only add in the .emacs.d components in their seperate
+repository.
+
+Some other examples I've looked at, that are mostly for science-based
+installations, include [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]], and [[https://github.com/jkitchin/scimax][SciMax]]
+
+You should be able to clone this repo onto a new machine, and when you
+start it up, your default emacs installation jsut comes up naturally
+for you.  This is due, in part, to the use-package setup that allows
+more auto-matic generation of your personal emacs setup.
+
+This is setup by cloning, but remember to use `--recurse-submodules`
+to get any submodules.  Otherwise, you'll have to `git submodule init;
+git submodule update`.
 
 #+BEGIN_SRC bash
 git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
 #+END_SRC
+
+
+* Configure =use-package=
+
+I use =use-package= to install and configure my packages. My =init.el= includes
+the initial setup for =package.el= and ensures that =use-package= is installed,
+since I wanna do that right away.
+
+This makes sure that =use-package= will install the package if it's not already
+available. It also means that I should be able to open Emacs for the first time
+on a fresh Debian box and have my whole environment automatically installed. I'm
+not /totally/ sure about that, but we're gettin' close.
+
+#+begin_src emacs-lisp
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+#+end_src
+
+Always compile packages, and use the newest version available.
+
+#+begin_src emacs-lisp
+  (use-package auto-compile
+    :config (auto-compile-on-load-mode))
+
+  (setq load-prefer-newer t)
+#+end_src
+
+** Custom Auto-generated customizations
+
+I don't want any customizations stored in my ~init.el~ file, that just
+confuses things.  Instead store it seperately.
+
+#+BEGIN_SRC emacs-lisp
+ (setq custom-file "~/.emacs.d/custom.el")
+ (load custom-file :noerror)
+#+END_SRC
+
+
+* Editor Keystrokes
+** Default Tab Width
+I like shallow indentation, but tabs are displayed as 8 characters by default.
+This reduces that.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default tab-width 2)
+#+END_SRC
+
+
+#+begin_src emacs-lisp
+	(use-package org
+		:mode (( "\\.org$" . org-mode ))
+		:ensure org
+)
+#+end_src
+
+I'd like the initial scratch buffer to be in Org:
+
+#+begin_src emacs-lisp
+  (setq initial-major-mode 'org-mode)
+#+end_src

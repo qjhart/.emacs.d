@@ -1,6 +1,8 @@
 *~
-configuration.el
 custom.el
 elpa
 projectile-bookmarks.eld
 transient
+me.org
+me.el
+README.el

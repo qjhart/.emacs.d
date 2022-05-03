@@ -1,6 +1,0 @@
-[submodule "plugins/sensible-defaults.el"]
-	path = plugins/sensible-defaults.el
-	url = https://github.com/hrs/sensible-defaults.el
-[submodule "ttl-mode"]
-	path = plugins/ttl-mode
-	url = https://github.com/jeeger/ttl-mode
