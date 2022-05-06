@@ -22,52 +22,288 @@ git submodule update`.
 git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
 #+END_SRC
 
+* Configuration
+** Configure =use-package=
+ I use =use-package= to install and configure my packages. My =init.el= includes
+ the initial setup for =package.el= and ensures that =use-package= is installed,
+ since I wanna do that right away.
 
-* Configure =use-package=
+ This makes sure that =use-package= will install the package if it's not already
+ available. It also means that I should be able to open Emacs for the first time
+ on a fresh Debian box and have my whole environment automatically installed. I'm
+ not /totally/ sure about that, but we're gettin' close.
 
-I use =use-package= to install and configure my packages. My =init.el= includes
-the initial setup for =package.el= and ensures that =use-package= is installed,
-since I wanna do that right away.
+ #+begin_src emacs-lisp
+   (require 'use-package-ensure)
+   (setq use-package-always-ensure t)
+ #+end_src
 
-This makes sure that =use-package= will install the package if it's not already
-available. It also means that I should be able to open Emacs for the first time
-on a fresh Debian box and have my whole environment automatically installed. I'm
-not /totally/ sure about that, but we're gettin' close.
+ Always compile packages, and use the newest version available.
 
-#+begin_src emacs-lisp
-  (require 'use-package-ensure)
-  (setq use-package-always-ensure t)
-#+end_src
+ #+begin_src emacs-lisp
+   (use-package auto-compile
+     :config (auto-compile-on-load-mode))
 
-Always compile packages, and use the newest version available.
+   (setq load-prefer-newer t)
+ #+end_src
 
-#+begin_src emacs-lisp
-  (use-package auto-compile
-    :config (auto-compile-on-load-mode))
+ We want to be able to customize our minor modes using =:delight= in the
+ =use-package= configurations.  This allows us to set minor visibility on here.
 
-  (setq load-prefer-newer t)
-#+end_src
+ #+BEGIN_SRC emacs-lisp
+ (use-package delight)
+ #+END_SRC
 
 ** Custom Auto-generated customizations
+ I don't want any customizations stored in my ~init.el~ file, that just
+ confuses things.  Instead store it seperately.
 
-I don't want any customizations stored in my ~init.el~ file, that just
-confuses things.  Instead store it seperately.
-
-#+BEGIN_SRC emacs-lisp
- (setq custom-file "~/.emacs.d/custom.el")
- (load custom-file :noerror)
-#+END_SRC
-
+ #+BEGIN_SRC emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file :noerror)
+ #+END_SRC
 
 * Editor Keystrokes
-** Default Tab Width
-I like shallow indentation, but tabs are displayed as 8 characters by default.
-This reduces that.
+** sensible defaults
+Lots of people have made some small initial modifications to some of the
+emacs defaults.  There are a lot, like better-defaults.el, but I like a few
+of the items in [[https://github.com/hrs/sensible-defaults.el.git][sensible-defaults]].  This is also a good way to show how you
+can use git submodules to include other peoples' packages that aren't in
+the emacs repo.  These are stored in the ~/.emacs.d/plugins]] location.
+However, we are using less and less of these entries, and pretty soon, we
+might be ready to move on without this.
 
 #+BEGIN_SRC emacs-lisp
-  (setq-default tab-width 2)
+	(load-file "~/.emacs.d/plugins/sensible-defaults.el/sensible-defaults.el")
+	;; (sensible-defaults/open-files-from-home-directory)
+	(sensible-defaults/increase-gc-threshold)
+	;; (sensible-defaults/delete-trailing-whitespace)
+	;; (sensible-defaults/treat-camelcase-as-separate-words)
+	(sensible-defaults/automatically-follow-symlinks)
+	(sensible-defaults/make-scripts-executable)
+	;; (sensible-defaults/single-space-after-periods)
+	(sensible-defaults/offer-to-create-parent-directories-on-save)
+	(sensible-defaults/apply-changes-to-highlighted-region)
+	(sensible-defaults/overwrite-selected-text)
+	;; (sensible-defaults/ensure-that-files-end-with-newline)
+	(sensible-defaults/confirm-closing-emacs)
+	(sensible-defaults/quiet-startup)
+	(sensible-defaults/make-dired-file-sizes-human-readable)
+	(sensible-defaults/shorten-yes-or-no)
+	(sensible-defaults/always-highlight-code)
+	(sensible-defaults/refresh-buffers-when-files-change)
+	(sensible-defaults/show-matching-parens)
+	(sensible-defaults/flash-screen-instead-of-ringing-bell)
+	(sensible-defaults/set-default-line-length-to 80)
+	;; (sensible-defaults/open-clicked-files-in-same-frame-on-mac)
+	(sensible-defaults/yank-to-point-on-mouse-click)
+	;; These are the keybindings
+	(sensible-defaults/bind-commenting-and-uncommenting)
+	;; (sensible-defaults/bind-home-and-end-keys)
+	;; (sensible-defaults/bind-keys-to-change-text-size)
+
+	;; Save backups to /tmp
+	(sensible-defaults/backup-to-temp-directory)
+
+	;; Double space users rule
+	(setq sentence-end-double-space t)
 #+END_SRC
 
+#+RESULTS:
+: t
+
+** Utility Functions
+These are used for more emacs customizations.
+#+BEGIN_SRC emacs-lisp
+  (defun hrs/view-buffer-name ()
+    "Display the filename of the current buffer."
+    (interactive)
+    (message (buffer-file-name)))
+
+  (defun hrs/generate-scratch-buffer ()
+    "Create and switch to a temporary scratch buffer with a random
+       name."
+    (interactive)
+    (switch-to-buffer (make-temp-name "scratch-")))
+
+  (defun hrs/de-unicode ()
+    "Tidy up a buffer by replacing all special Unicode characters
+       (smart quotes, etc.) with their more sane cousins"
+    (interactive)
+    (let ((unicode-map '(("[\u2018\|\u2019\|\u201A\|\uFFFD]" . "'")
+                         ("[\u201c\|\u201d\|\u201e]" . "\"")
+                         ("\u2013" . "--")
+                         ("\u2014" . "---")
+                         ("\u2026" . "...")
+                         ("\u00A9" . "(c)")
+                         ("\u00AE" . "(r)")
+                         ("\u2122" . "TM")
+                         ("[\u02DC\|\u00A0]" . " "))))
+      (save-excursion
+        (loop for (key . value) in unicode-map
+              do
+              (goto-char (point-min))
+              (replace-regexp key value)))))
+
+  (defun hrs/beautify-json ()
+    "Pretty-print the JSON in the marked region. Currently shells
+       out to `jsonpp'--be sure that's installed!"
+    (interactive)
+    (save-excursion
+      (shell-command-on-region (mark) (point) "jsonpp" (buffer-name) t)))
+
+  (defun hrs/unfill-paragraph ()
+    "Takes a multi-line paragraph and makes it into a single line of text."
+    (interactive)
+    (let ((fill-column (point-max)))
+      (fill-paragraph nil)))
+
+  (defun hrs/kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
+  (defun hrs/visit-last-dired-file ()
+    "Open the last file in an open dired buffer."
+    (end-of-buffer)
+    (previous-line)
+    (dired-find-file))
+
+  (defun hrs/visit-last-migration ()
+    "Open the last file in 'db/migrate/'. Relies on projectile. Pretty sloppy."
+    (interactive)
+    (dired (expand-file-name "db/migrate" (projectile-project-root)))
+    (hrs/visit-last-dired-file)
+    (kill-buffer "migrate"))
+
+  (defun hrs/add-auto-mode (mode &rest patterns)
+    "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
+    (dolist (pattern patterns)
+      (add-to-list 'auto-mode-alist (cons pattern mode))))
+
+  (defun hrs/find-file-as-sudo ()
+    (interactive)
+    (let ((file-name (buffer-file-name)))
+      (when file-name
+        (find-alternate-file (concat "/sudo::" file-name)))))
+
+#+END_SRC
+** Editorconfig
+It's better to use the editorconfig files to set your ending whitespace, tab
+width, etc.  This allows you to play better with other editors or collaborators.
+
+#+BEGIN_SRC emacs-lisp
+(use-package editorconfig
+  :ensure t
+  :delight " EC"
+  :config
+  (editorconfig-mode 1))
+#+END_SRC
+
+** Set Keys
+
+Assume that I always want to kill the current buffer when hitting =C-x k=.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+#+END_SRC
+
+Use System style =C-x= =C-c= =C-v=.
+
+#+BEGIN_SRC emacs-lisp
+  (cua-mode t nil (cua-base))
+#+END_SRC
+
+** Better Customization
+These are just some additional customization flags, you can also find these in the Options area.
+#+BEGIN_SRC emacs-lisp
+(save-place-mode t)
+(show-paren-mode t)
+#+END_SRC
+
+* Emacs Look and Feel
+** Menu Bars
+
+The toolbar and scroll bar aren't super useful, but I can never remember all the
+items in the menubar, so I leave that on.
+
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode 0)
+  (menu-bar-mode 1)
+  (when window-system
+    (scroll-bar-mode -1))
+#+END_SRC
+
+#+RESULTS:
+
+** Set default font and configure font resizing
+
+The standard =text-scale-= functions just resize the text in the current buffer;
+I'd generally like to resize the text in /every/ buffer, and I usually want to
+change the size of the modeline, too (this is especially helpful when
+presenting). These functions and bindings let me resize everything all together!
+
+Note that this overrides the default font-related keybindings from
+=sensible-defaults=.
+
+This sets the font to inconsolata, which usually isn't available on a fresh
+install.  You can either comment that out, or install that font.  On debian
+machines that is the ~fonts-inconsolata~ package.
+
+#+BEGIN_SRC emacs-lisp
+  (setq hrs/default-font "Inconsolata")
+  (setq hrs/default-font-size 18)
+  (setq hrs/current-font-size hrs/default-font-size)
+
+  (setq hrs/font-change-increment 1.1)
+
+  (defun hrs/set-font-size ()
+    "Set the font to `hrs/default-font' at `hrs/current-font-size'."
+    (set-frame-font
+     (concat hrs/default-font "-" (number-to-string hrs/current-font-size))))
+
+  (defun hrs/reset-font-size ()
+    "Change font size back to `hrs/default-font-size'."
+    (interactive)
+    (setq hrs/current-font-size hrs/default-font-size)
+    (hrs/set-font-size))
+
+  (defun hrs/increase-font-size ()
+    "Increase current font size by a factor of `hrs/font-change-increment'."
+    (interactive)
+    (setq hrs/current-font-size
+          (ceiling (* hrs/current-font-size hrs/font-change-increment)))
+    (hrs/set-font-size))
+
+  (defun hrs/decrease-font-size ()
+    "Decrease current font size by a factor of `hrs/font-change-increment', down to a minimum size of 1."
+    (interactive)
+    (setq hrs/current-font-size
+          (max 1
+               (floor (/ hrs/current-font-size hrs/font-change-increment))))
+    (hrs/set-font-size))
+
+  (define-key global-map (kbd "C-)") 'hrs/reset-font-size)
+  (define-key global-map (kbd "C-+") 'hrs/increase-font-size)
+  (define-key global-map (kbd "C-=") 'hrs/increase-font-size)
+  (define-key global-map (kbd "C-_") 'hrs/decrease-font-size)
+  (define-key global-map (kbd "C--") 'hrs/decrease-font-size)
+  (hrs/reset-font-size)
+#+END_SRC
+
+** Modeline
+
+=moody= gives a truly lovely ribbon-based modeline.
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+end_src
+
+* Org Mode
 
 #+begin_src emacs-lisp
 	(use-package org
@@ -77,7 +313,6 @@ This reduces that.
 #+end_src
 
 I'd like the initial scratch buffer to be in Org:
-
 #+begin_src emacs-lisp
   (setq initial-major-mode 'org-mode)
 #+end_src
