@@ -67,6 +67,19 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
   (load custom-file :noerror)
  #+END_SRC
 
+
+** Emacs Path
+   Include .bashrc when executing shell commands.
+
+   #+begin_src emacs-lisp
+     (use-package exec-path-from-shell
+     :ensure t
+     :config (exec-path-from-shell-initialize))
+   #+end_src
+
+   #+RESULTS:
+   : t
+
 * Editor Keystrokes
 ** Command extensions
 These are some various extensions that are commonly used.
@@ -121,9 +134,6 @@ These are some various extensions that are commonly used.
 	 ;; Double space users rule
 	 (setq sentence-end-double-space t)
  #+END_SRC
-
- #+RESULTS:
- : t
 
 *** Utility Functions
  These are used for more emacs customizations.
@@ -228,6 +238,15 @@ Use System style =C-x= =C-c= =C-v=.
   (cua-mode t)
 #+END_SRC
 
+These are some of the default keystrokes from HRS.
+
+#+begin_src emacs-lisp
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
+  (define-key global-map "\C-cc" 'org-capture)
+#+end_src
+
+
 ** Editorconfig
 It's better to use the editorconfig files to set your ending whitespace, tab
 width, etc.  This allows you to play better with other editors or collaborators.
@@ -251,17 +270,6 @@ custom-themes~
 
 #+BEGIN_SRC emacs-lisp
    (use-package solarized-theme
-  ;;   :config
-  ;;   (load-theme 'solarized-light t)
-  ;;   (let ((line (face-attribute 'mode-line :underline)))
-  ;;   (set-face-attribute 'mode-line          nil :overline   line)
-  ;;         (set-face-attribute 'mode-line-inactive nil :overline   line)
-  ;;         (set-face-attribute 'mode-line-inactive nil :underline  line)
-  ;;   (set-face-attribute 'mode-line          nil
-  ;;                       :background "#89839C"
-  ;;                       :box        t)
-  ;;         (set-face-attribute 'mode-line-inactive nil :box        nil)
-  ;;         (set-face-attribute 'mode-line-inactive nil :background "#DCD0FF"))
      :ensure t)
 #+END_SRC
 
@@ -706,7 +714,8 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
                     (org-src-fontify-natively t)
                     (org-src-tab-acts-natively t)
                     (org-src-window-setup 'current-window)
-
+                    (org-datetree-add-timestamp 'active)
+                    (org-default-notes-file "~/org/notes")
   )
 #+end_src
 
@@ -727,6 +736,10 @@ This adds nice UTF-8 bullets to outlines
 #+end_src
 
 
+** Capture templates
+
+
+
 ** Note Taking
 
 I'm looking into the best method for note taking.  Originally, I was going
@@ -738,6 +751,35 @@ sharing via git.  Two explainations of useing these are
 [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/]] and
 [[http://doc.norang.ca/org-mode.html]]
 
+** =org-journal=
+
+   Okay, our original plan will be to integrate org-journal into my framework,
+   but using =org-capture= templates as the methodology to do this.  I'm
+   currently expecting that
+
+   #+begin_src emacs-lisp
+     (use-package org-journal
+     :ensure t
+     :defer t
+     :init
+     ;; Change default prefix key; needs to be set before loading org-journal
+     (setq org-journal-prefix-key "C-c j ")
+     (defun org-journal-find-location ()
+       ;; Open today's journal, but specify a non-nil prefix argument in order to
+       ;; inhibit inserting the heading; org-capture will insert the heading.
+       (org-journal-new-entry t)
+       (unless (eq org-journal-file-type 'daily)
+         (org-narrow-to-subtree))
+       (goto-char (point-max)))
+     (add-to-list 'org-capture-templates
+                  '("j" "Journal entry" plain (function org-journal-find-location)
+                    "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                    :jump-to-captured t :immediate-finish t))
+     :config
+     (setq org-journal-dir "~/org/journal/"
+           org-journal-date-format "%A, %d %B %Y"))
+
+   #+end_src
 
 ** =org-roam=
 
