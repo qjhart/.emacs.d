@@ -735,8 +735,12 @@ worth looking at the original emacs tools as well.  [[https://orgmode.org/manual
 of =org-mode= and can be used to find =TODOS= etc. You can extend the standard
 journals with [[https://github.com/bastibe/org-journal][=org-journal=]] which splits days up a bit more, maybe useful for
 sharing via git.  Two explainations of useing these are
-[[http://cachestocaches.com/2016/9/my-workflow-org-agenda/]] and
-[[http://doc.norang.ca/org-mode.html]]
+[[http://cachestocaches.com/2016/9/my-workflow-org-agenda/]],
+[[http://www.howardism.org/Technical/Emacs/journaling-org.html]] and
+[[http://doc.norang.ca/org-mode.html]].  There are some complaints that
+=org-journal= is too slow for searching, and more judicious use of =org-capture=
+might also work.  They seem a bit more complex, though, so I might just start w/
+=org-journal=.
 
 
 ** =org-roam=
@@ -747,7 +751,38 @@ Once we have our citations in org-roam, [[https://github.com/org-roam/org-roam-b
 incorporate into your paper writing utilities.  [[https://github.com/bdarcus/citar][Citar]] shows selection of
 citations, then.
 
+* TODO [[https://docs.projectile.mx/projectile/installation.html][=Projectile=]]
+
+
 * Programming
+
+** Magit
+
+There are some suggestions from [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org#magit][HRS]], [[https://github.com/bradwright/emacs-d/blob/master/packages/init-magit.el][bradwright]], about good ways to use this, although I'm
+not sure about the
+
+#+begin_src emacs-lisp
+    (use-package magit
+    :bind (("C-c g" . magit-status)
+           ("C-c C-g l" . magit-file-log)
+           ("C-c f" . magit-grep))
+
+    :config
+  ;  (use-package git-commit)
+  ;  (use-package magit-section)
+  ;  (use-package with-editor)
+
+    (setq magit-push-always-verify nil
+          git-commit-summary-max-length 50))
+
+#+end_src
+
+
+** TODO LSP-mode
+
+There are two competing Language server implementations, =lsp-mode= and
+[[https://github.com/joaotavora/eglot][=elgot=]].  Of the two =elgot= seems more simple.  So simple, I don't even know
+where the servers live :)
 
 ** Sparql / TTL /TRIG
 
