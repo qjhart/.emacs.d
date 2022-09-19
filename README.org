@@ -246,6 +246,9 @@ These are some of the default keystrokes from HRS.
   (define-key global-map "\C-cc" 'org-capture)
 #+end_src
 
+#+RESULTS:
+: org-capture
+
 
 ** Editorconfig
 It's better to use the editorconfig files to set your ending whitespace, tab
@@ -717,7 +720,16 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
                     (org-datetree-add-timestamp 'active)
                     (org-default-notes-file "~/org/notes")
   )
+  (use-package org-capture
+    :ensure nil
+    :after org
+
+    )
+
 #+end_src
+
+#+RESULTS:
+
 
 
 I'd like the initial scratch buffer to be in Org:
@@ -771,15 +783,19 @@ sharing via git.  Two explainations of useing these are
        (unless (eq org-journal-file-type 'daily)
          (org-narrow-to-subtree))
        (goto-char (point-max)))
-     (add-to-list 'org-capture-templates
+      (add-to-list 'org-capture-templates
                   '("j" "Journal entry" plain (function org-journal-find-location)
                     "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
                     :jump-to-captured t :immediate-finish t))
+
      :config
      (setq org-journal-dir "~/org/journal/"
            org-journal-date-format "%A, %d %B %Y"))
 
+
    #+end_src
+
+   #+RESULTS:
 
 ** =org-roam=
 
