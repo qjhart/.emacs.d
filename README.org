@@ -793,7 +793,7 @@ might also work.  They seem a bit more complex, though, so I might just start w/
                     :jump-to-captured t :immediate-finish t))
 
      :config
-     (setq org-journal-dir "~/org/journal/"
+     (setq org-journal-dir "~/.org/journal/"
            org-journal-date-format "%A, %d %B %Y"))
 
 
@@ -810,7 +810,6 @@ incorporate into your paper writing utilities.  [[https://github.com/bdarcus/cit
 citations, then.
 
 * TODO [[https://docs.projectile.mx/projectile/installation.html][=Projectile=]]
-
 
 * Programming
 
@@ -871,6 +870,18 @@ scripts. More importantly, it can be used with =babel= for literate programming.
 :mode (("\\.jq$" . jq-mode))
 )
 #+END_SRC
+
+** Docker
+
+There are a few things that make life more simple in docker.  One of them is
+being able to easily [[https://ligerlearn.com/using-emacs-edit-files-within-docker-containers/][edit files within a container.]]  This is a super great
+feature, you can also use eshell within a tramp docker session.
+
+#+begin_src emacs-lisp
+  (use-package docker-tramp)
+#+end_src
+
+#+RESULTS:
 
 * Babel
 Second only to org-mode, =babel= is the greatest component for literate
