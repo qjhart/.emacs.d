@@ -473,7 +473,7 @@ machines that is the ~fonts-inconsolata~ package.
     (auto-fill-function ".⏎")
     (visual-line-mode " VLM")
     :custom
-    (find-file-run-dired nil)
+    (find-file-run-dired 1) ;; set to nill to disable
     )
 #+end_src
 
@@ -713,24 +713,30 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
                   :mode (( "\\.org$" . org-mode ))
                   :ensure org
                   :custom
-                    (org-ellipsis "⤵")
-                    (org-src-fontify-natively t)
-                    (org-src-tab-acts-natively t)
-                    (org-src-window-setup 'current-window)
-                    (org-datetree-add-timestamp 'active)
-                    (org-default-notes-file "~/org/notes")
-  )
+                  (require 'ox-md)
+                  (org-directory "~/.org")
+                  (org-ellipsis "⤵")
+                  (org-src-fontify-natively t)
+                  (org-src-tab-acts-natively t)
+                  (org-src-window-setup 'current-window)
+                  (org-datetree-add-timestamp 'active)
+                  (org-default-notes-file (concat org-directory "/notes.org"))
+                  (org-agenda-files '("~/.org/"))
+                  )
   (use-package org-capture
     :ensure nil
     :after org
-
+    :custom
+    (org-capture-templates
+     '(("t" "Todo" entry (file+headline "gtd.org" "Tasks")
+        "* TODO %?\n  %i\n  %a")))
     )
 
+  (require 'ox-md)
 #+end_src
 
 #+RESULTS:
-
-
+: ox-md
 
 I'd like the initial scratch buffer to be in Org:
 #+begin_src emacs-lisp
@@ -746,10 +752,6 @@ This adds nice UTF-8 bullets to outlines
     :init
     (add-hook 'org-mode-hook 'org-bullets-mode))
 #+end_src
-
-
-** Capture templates
-
 
 
 ** Note Taking
@@ -787,19 +789,24 @@ might also work.  They seem a bit more complex, though, so I might just start w/
        (unless (eq org-journal-file-type 'daily)
          (org-narrow-to-subtree))
        (goto-char (point-max)))
-      (add-to-list 'org-capture-templates
+
+      :custom
+      (org-journal-dir "~/.org/journal")
+      (org-jounral-file-format "%Y%m%d")
+      (org-journal-date-format "%A, %d %B %Y")
+      (org-journal-enable-agenda-integration t)
+     :config
+     (add-to-list 'auto-mode-alist '("~.org/journal/[0-9]*$" . org-mode))
+     (add-to-list 'org-capture-templates
                   '("j" "Journal entry" plain (function org-journal-find-location)
                     "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
                     :jump-to-captured t :immediate-finish t))
-
-     :config
-     (setq org-journal-dir "~/.org/journal/"
-           org-journal-date-format "%A, %d %B %Y"))
-
+     )
 
    #+end_src
 
    #+RESULTS:
+   : t
 
 ** =org-roam=
 
