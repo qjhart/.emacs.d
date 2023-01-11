@@ -471,7 +471,7 @@ machines that is the ~fonts-inconsolata~ package.
   (use-package emacs
     :delight
     (auto-fill-function ".⏎")
-    (visual-line-mode " VLM")
+    (js-mode "JS")
     :custom
     (find-file-run-dired 1) ;; set to nill to disable
     )
@@ -776,37 +776,48 @@ might also work.  They seem a bit more complex, though, so I might just start w/
    currently expecting that
 
    #+begin_src emacs-lisp
-     (use-package org-journal
-     :ensure t
-     :defer t
-     :init
-     ;; Change default prefix key; needs to be set before loading org-journal
-     (setq org-journal-prefix-key "C-c j ")
-     (defun org-journal-find-location ()
-       ;; Open today's journal, but specify a non-nil prefix argument in order to
-       ;; inhibit inserting the heading; org-capture will insert the heading.
-       (org-journal-new-entry t)
-       (unless (eq org-journal-file-type 'daily)
-         (org-narrow-to-subtree))
-       (goto-char (point-max)))
-
+      (use-package org-journal
+      :ensure t
+      :demand t
+      :init
+      ;; Change default prefix key; needs to be set before loading org-journal
+      (setq org-journal-prefix-key "C-c j ")
+      (defun org-journal-find-location ()
+        ;; Open today's journal, but specify a non-nil prefix argument in order to
+        ;; inhibit inserting the heading; org-capture will insert the heading.
+        (org-journal-new-entry t)
+        (unless (eq org-journal-file-type 'daily)
+          (org-narrow-to-subtree))
+        (goto-char (point-max)))
+      (defun org-journal-date-location (&optional scheduled-time)
+        (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "Date:"))))
+          (setq org-journal--date-location-scheduled-time scheduled-time)
+          (org-journal-new-entry t (org-time-string-to-time scheduled-time))
+          (unless (eq org-journal-file-type 'daily)
+            (org-narrow-to-subtree))
+          (goto-char (point-max))))
       :custom
-      (org-journal-dir "~/.org/journal")
-      (org-jounral-file-format "%Y%m%d")
-      (org-journal-date-format "%A, %d %B %Y")
-      (org-journal-enable-agenda-integration t)
-     :config
-     (add-to-list 'auto-mode-alist '("~.org/journal/[0-9]*$" . org-mode))
-     (add-to-list 'org-capture-templates
-                  '("j" "Journal entry" plain (function org-journal-find-location)
-                    "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-                    :jump-to-captured t :immediate-finish t))
-     )
+       (org-journal-dir "~/.org/journal")
+       (org-jounral-file-format "%Y%m%d")
+       (org-journal-date-format "%A, %d %B %Y")
+       (org-journal-enable-agenda-integration t)
+      :config
+      (add-to-list 'auto-mode-alist '("~.org/journal/[0-9]*$" . org-mode))
+      (add-to-list 'org-capture-templates
+                   '("j" "Journal entry" plain (function org-journal-find-location)
+                     "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                     :jump-to-captured t :immediate-finish t))
+      (add-to-list 'org-capture-templates
+                   '("t" "TODO" plain (function org-journal-date-location)
+                      "** TODO %?\n <%(princ org-journal--date-location-scheduled-time)>\n"
+                      :jump-to-captured t))
+      )
 
    #+end_src
 
    #+RESULTS:
    : t
+
 
 ** =org-roam=
 
@@ -841,10 +852,52 @@ not sure about the
 
 #+end_src
 
-** TODO LSP-mode
+** LSP-mode
 There are two competing Language server implementations, =lsp-mode= and
-[[https://github.com/joaotavora/eglot][=elgot=]].  Of the two =elgot= seems more simple.  So simple, I don't even know
-where the servers live :)
+[[https://github.com/joaotavora/eglot][=elgot=]].
+
+
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (XXX-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+    :config
+    (which-key-mode))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** =elgot=
+    2022-12-20 =elgot= is or soon will be supported directly in EMACS base, so it's seems
+    like it's making a large splash in the community.  For using javascript I
+    also needed to do ~snap install typescript-language-server~ in order to get
+    the javascript supported.
+
+   #+begin_src emacs-lisp
+     (use-package eglot
+       )
+   #+end_src
+
+   #+RESULTS:
+
 
 ** SQL Mode
    We can use the standard sql-mode, but we really need to add in the sql-indent
