@@ -47,7 +47,6 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
  #+begin_src emacs-lisp
    (use-package auto-compile
      :config (auto-compile-on-load-mode))
-
    (setq load-prefer-newer t)
  #+end_src
 
@@ -67,14 +66,52 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
   (load custom-file :noerror)
  #+END_SRC
 
-
 ** Emacs Path
    Include .bashrc when executing shell commands.
 
    #+begin_src emacs-lisp
      (use-package exec-path-from-shell
      :ensure t
-     :config (exec-path-from-shell-initialize))
+     :config (exec-path-from-shell-initialize)
+     )
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** Tramp
+You can setup some customizations for tramp. In particular, you can setup
+connection parameters.  By default, we want to connect using bash, which allows
+us to include the PATH as defined by bashrc.  I'm not sure about the point in
+using ~use-package~ in this case.  This *seems* to be working, but still doesn't
+fix that fact that ~eglot~ over tramp can't find executables.
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Connection-Local-Variables.html][connection-local-set-profiles]] is a standard emacs setup.  Run
+~tramp-cleanup-all-connections~ if you make some changes here.
+
+   #+begin_src emacs-lisp
+     (use-package tramp
+       :ensure t
+       :config
+            (add-to-list 'tramp-connection-properties
+                         (list (regexp-quote "/ssh:quinn.library.ucdavis.edu:")
+                               "remote-shell" "/usr/bin/bash"))
+       ;; nil selects all
+       (add-to-list 'tramp-connection-properties
+                    (list nil "remote-shell" "/usr/bin/bash"))
+       (connection-local-set-profile-variables
+        'remote-bash
+        '((explicit-shell-file-name . "/bin/bash")
+          (explicit-bash-args . ("-i"))))
+       (connection-local-set-profile-variables
+        'own-remote-path
+        '((tramp-remote-path . (tramp-own-remote-path tramp-default-remote-path))))
+       (connection-local-set-profiles
+        '(:application tramp ) 'own-remote-path)
+       (connection-local-set-profiles
+        '(:application tramp ) 'remote-bash)
+       )
+
    #+end_src
 
    #+RESULTS:
@@ -472,6 +509,8 @@ machines that is the ~fonts-inconsolata~ package.
     :delight
     (auto-fill-function ".⏎")
     (js-mode "JS")
+    (sh-mode "SH")
+    (eldoc-mode nil "eldoc")
     :custom
     (find-file-run-dired 1) ;; set to nill to disable
     )
@@ -728,7 +767,7 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
     :after org
     :custom
     (org-capture-templates
-     '(("t" "Todo" entry (file+headline "gtd.org" "Tasks")
+     '(("T" "Todo" entry (file+headline "gtd.org" "Tasks")
         "* TODO %?\n  %i\n  %a")))
     )
 
@@ -830,7 +869,6 @@ citations, then.
 * TODO [[https://docs.projectile.mx/projectile/installation.html][=Projectile=]]
 
 * Programming
-
 ** Magit
 
 There are some suggestions from [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org#magit][HRS]], [[https://github.com/bradwright/emacs-d/blob/master/packages/init-magit.el][bradwright]], about good ways to use this, although I'm
@@ -852,6 +890,34 @@ not sure about the
 
 #+end_src
 
+** flymake/flycheck
+
+#+begin_src emacs-lisp
+  (use-package flymake
+  :config
+  (setq flymake-mode-line-title "x")
+  )
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+#+end_src
+
+#+RESULTS:
+: q
+
+I've turned off global flychecking mode, to better test eglot as a checker.
+
+#+begin_src emacs-lisp
+;;(use-package flycheck
+;;  :ensure t
+;;  :init (global-flycheck-mode))
+#+end_src
+
+#+RESULTS:
+
 ** LSP-mode
 There are two competing Language server implementations, =lsp-mode= and
 [[https://github.com/joaotavora/eglot][=elgot=]].
@@ -869,11 +935,11 @@ There are two competing Language server implementations, =lsp-mode= and
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;;(use-package lsp-ui :commands lsp-ui-mode)
+;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;; optionally if you want to use debugger
-(use-package dap-mode)
+;; (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 ;; optional if you want which-key integration
@@ -885,11 +951,16 @@ There are two competing Language server implementations, =lsp-mode= and
 #+RESULTS:
 : t
 
-*** =elgot=
+** =elgot=
     2022-12-20 =elgot= is or soon will be supported directly in EMACS base, so it's seems
     like it's making a large splash in the community.  For using javascript I
     also needed to do ~snap install typescript-language-server~ in order to get
     the javascript supported.
+
+    I was having trouble getting good intergration w/ the bash-language-server,
+    but it turns out that was just because I didn't have shellcheck installed,
+    which provides alot of the functionality.
+
 
    #+begin_src emacs-lisp
      (use-package eglot
@@ -897,7 +968,6 @@ There are two competing Language server implementations, =lsp-mode= and
    #+end_src
 
    #+RESULTS:
-
 
 ** SQL Mode
    We can use the standard sql-mode, but we really need to add in the sql-indent
