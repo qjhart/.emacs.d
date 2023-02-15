@@ -1025,6 +1025,56 @@ There are two competing Language server implementations, =lsp-mode= and
 )
 #+END_SRC
 
+** Co-pilot
+
+We should try and use co-pilot via emacs [[https://www.irfanhabib.com/2022-04-26-setting-up-github-copilot-in-emacs/][tutorial]]
+
+#+begin_src emacs-lisp
+  ;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+        (use-package copilot
+        :straight (:host github :repo "zerolfx/copilot.el"
+                         :files ("dist" "copilot.el"))
+        :ensure t
+        :config
+        (add-hook 'prog-mode-hook 'copilot-mode)
+        )
+#+end_src
+
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+  (defun my/copilot-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (indent-for-tab-command)))
+
+(with-eval-after-load 'copilot
+   (define-key copilot-mode-map (kbd "<tab>") #'my/copilot-tab))
+#+end_src
+
+#+RESULTS:
+: my/copilot-tab
+
 ** JSON
 
 Although, I don't use it often, =jq-mode= can be useful for longish jq
