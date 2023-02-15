@@ -286,7 +286,6 @@ These are some of the default keystrokes from HRS.
 #+RESULTS:
 : org-capture
 
-
 ** Editorconfig
 It's better to use the editorconfig files to set your ending whitespace, tab
 width, etc.  This allows you to play better with other editors or collaborators.
@@ -739,6 +738,42 @@ Sometimes, though, I don't wanna wrap text. This toggles wrapping with =C-c q=:
   (global-set-key (kbd "C-c q") 'auto-fill-mode)
 #+END_SRC
 
+** Helpful
+
+This is an updated help module.  One reason I added it was as a test for a [[*Help transient][Help
+transient]], that uses it.  I guess I should still use the globals to get help at
+a point.
+
+#+begin_src emacs-lisp
+    (use-package helpful
+      :config
+  ;; Note that the built-in `describe-function' includes both functions
+  ;; and macros. `helpful-function' is functions only, so we provide
+  ;; `helpful-callable' as a drop-in replacement.
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+
+  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+  ;; for this in lisp modes.
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+  ;; Look up *F*unctions (excludes macros).
+  ;;
+  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+  ;; already links to the manual, if a function is referenced there.
+  (global-set-key (kbd "C-h F") #'helpful-function)
+
+  ;; Look up *C*ommands.
+  ;;
+  ;; By default, C-h C is bound to describe `describe-coding-system'. I
+  ;; don't find this very useful, but it's frequently useful to only
+  ;; look at interactive functions.
+  (global-set-key (kbd "C-h C") #'helpful-command)
+      )
+#+end_src
+
 * Org Mode
 
 Custom vars: use a UTF-8 arrow, instead of the usual ellipsis (=...=) that org
@@ -1078,3 +1113,199 @@ Associate the "dot" language with the =graphviz-dot= major mode.
   (use-package graphviz-dot-mode)
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 #+end_src
+
+* Transients
+
+#+begin_src emacs-lisp
+  (use-package transient)
+#+end_src
+
+** Help transient
+
+This example found on [[https://www.reddit.com/r/emacs/comments/f3o0v8/anyone_have_good_examples_for_transient/][reddit]].  It's a good lisp internal example.
+
+#+begin_src emacs-lisp
+    (define-transient-command hrm-help-transient ()
+    "Help commands that I use. A subset of C-h with others thrown in."
+    ["Help Commands"
+     ["Mode & Bindings"
+      ("m" "Mode" describe-mode)
+      ("b" "Major Bindings" which-key-show-full-major-mode)
+      ("B" "Minor Bindings" which-key-show-full-minor-mode-keymap)
+      ("d" "Descbinds" counsel-descbinds)
+      ("t" "Top Bindings  " which-key-show-top-level)
+      ]
+     ["Describe"
+      ("C" "Command" helpful-command)
+      ("f" "Function" helpful-callable)
+      ("v" "Variable" helpful-variable)
+      ("k" "Key" helpful-key)
+      ("c" "Key Briefly" describe-key-briefly)
+      ]
+     ["Info on"
+      ("C-c" "Emacs Command" Info-goto-emacs-command-node)
+      ("C-f" "Function" counsel-info-lookup-symbol) ; s for symbol?
+      ("C-v" "Variable" counsel-info-lookup-symbol) ; . for symbol?
+      ("C-k" "Emacs Key" Info-goto-emacs-key-command-node)
+      ]
+     ["Goto Source"
+      ("L" "Library" find-library-other-frame)
+      ("F" "Function" find-function-other-frame)
+      ("V" "Variable" find-variable-other-frame)
+      ("K" "Key" find-function-on-key-other-frame)
+      ]
+     ]
+    [
+     ["Internals"
+      ("I" "Input Method" describe-input-method)
+      ("G" "Language Env" describe-language-environment)
+      ("S" "Syntax" describe-syntax)
+      ("O" "Coding System" describe-coding-system)
+      ("C-o" "Coding Brief" describe-current-coding-system-briefly)
+      ("T" "Display Table" describe-current-display-table)
+      ("e" "Echo Messages" view-echo-area-messages)
+      ("l" "Lossage" view-lossage)
+      ]
+     ["Describe"
+      ("s" "Symbol" helpful-symbol)
+      ("." "At Point   " helpful-at-point)
+      ("C-f" "Face" counsel-describe-face)
+      ("w" "Where Is" where-is)
+      ("=" "Position" what-cursor-position)
+      ]
+;;     ["Info Manuals"
+;;      ("C-i" "Info" info)
+;;      ("C-4" "Other Window " info-other-window)
+;;      ("C-e" "Emacs" info-emacs-manual)
+;;      ("C-l" "Elisp" info-elisp-manual)
+;;      ]
+;;     ["External"
+;;      ("W" "Dictionary" lookup-word-at-point)
+;;      ("D" "Dash" dash-at-point)
+;;      ]
+     ]
+    )
+  (global-set-key (kbd "C-S-h") 'hrm-help-transient)
+#+end_src
+
+
+** pmx-transient-toy
+
+#+begin_src emacs-lisp
+      (require 'cl-lib)
+
+    (transient-define-suffix pmx-show-prefix ()
+      "Show the prefix that invoked this suffix"
+      :description "prefix"
+      (interactive)
+      (message "Current prefix key: %s" transient-current-prefix))
+
+    (transient-define-suffix pmx-show-command ()
+      "Show this command"
+      :description "current command"
+      (interactive)
+      (message "Current command: %s" transient-current-command))
+
+    (transient-define-suffix pmx-show-suffixes ()
+      "Show the current suffixes"
+      :description "suffixes"
+      (interactive)
+      (message "Current suffixes: %s" (cl-mapcar
+                                       (lambda (obj)
+                                         (oref obj description))
+                                       transient-current-suffixes)))
+
+    (transient-define-suffix pmx-show-args ()
+      "Show current infix args"
+      :description "infix args"
+      (interactive)
+      (message "Current infix args: %s" (transient-args transient-current-command)))
+
+    (transient-define-suffix pmx-send-message ()
+      "Send message to minibuffer"
+      :description "send message"
+      :transient t
+      (interactive)
+      (message "Message sent at %s. Happy?" (shell-command-to-string "echo -n $(date)")))
+
+    (transient-define-argument pmx-affirmative ()
+      "Are we affirmative?"
+      :description "affirmative"
+      :argument "affirmative")
+
+    (transient-define-argument pmx-yep-nope ()
+      "Is it yep or is it nope?"
+      :description "yep or nope"
+      :class 'transient-option
+      :shortarg "-y"
+      :argument "--yepnope="
+      :choices '("yep" "nope"))
+
+    (transient-define-argument pmx-abc ()
+      "Which letters do you like?"
+      :description "abc"
+      :class 'transient-option
+      :shortarg "-a"
+      :argument "--abc="
+      :choices '("A" "B" "C"))
+
+    (defvar pmx--variable "A string" "A variable brought to you by pmx")
+
+    (transient-define-argument pmx-set-lisp-variable ()
+      "Set a lisp variable, pmx--variable.  Won't show up in infix arguments."
+      :description "set pmx--variable"
+      :class 'transient-lisp-variable
+      :shortarg "-l"
+      :variable 'pmx--variable
+      :argument "--letters=")
+
+    (transient-define-suffix pmx-show-lisp-variable ()
+      "Access pmx--variable"
+      :description "show pmx--variable"
+      (interactive)
+      (message "Current value of pmx--variable: %s" pmx--variable))
+
+    (transient-define-suffix pmx-dynamic-suffix ()
+      "Description depends on pmx--variable"
+      :if-not '(lambda () (string-equal pmx--variable "abc"))
+      :description '(lambda () (format "pmx %s" pmx--variable))
+      (interactive)
+      (message "Current value of pmx--variable: %s" pmx--variable))
+
+    (transient-define-prefix pmx-nested-transient ()
+      "Some subcommands, like tree menus from the land of mice"
+      ["Switches"
+       ("-s" "another switch" ("-x" "--conflicting"))]
+      ["Sub Command Introspection"
+       ("i" pmx-show-args)
+       ("p" pmx-show-prefix)
+       ("s" pmx-show-suffixes)
+       ("c" pmx-show-command)]
+      ["Dynamic Commands"
+       ("d" pmx-dynamic-suffix)])
+
+    (transient-define-prefix pmx-transient-toy ()
+      "Figure out how to use transient's API properly"
+      [:class transient-columns
+       ["Things"
+        ("-w" "switch"  ("-w" "--switch"))]
+       ["Others"
+        ("i" pmx-show-args)
+        ("p" pmx-show-prefix)
+        ("s" pmx-show-suffixes)
+        ("c" pmx-show-command)
+        ("m" pmx-send-message)]
+       ["More"
+        ("f" pmx-affirmative)
+        ("y" pmx-yep-nope)
+        ("a" pmx-abc)
+        ("l" pmx-set-lisp-variable)
+        ("w" pmx-show-lisp-variable)]
+       ["Drilldown"
+        ("d" "drilldown" pmx-nested-transient)]])
+
+    (global-set-key (kbd "M-o") 'pmx-transient-toy)
+#+end_src
+
+#+RESULTS:
+: pmx-transient-toy
