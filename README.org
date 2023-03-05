@@ -285,7 +285,8 @@ see a bad color, select it and use ~C-u C-x = ~
 ** Theme-Magic
 
 Theme-Magic needs to have [[https://github.com/dylanaraps/pywal][pywal]] installed. The best way is to install this as a
-user with ~pip3 install --user pywal~
+user with ~pip3 install --user pywal~.  pywal is able to set the colors for the
+alacritty terminals dynamically, but I'm not exactly sure how that's done.
 
 #+begin_src emacs-lisp
   (use-package theme-magic
