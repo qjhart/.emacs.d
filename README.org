@@ -47,7 +47,6 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
  #+begin_src emacs-lisp
    (use-package auto-compile
      :config (auto-compile-on-load-mode))
-
    (setq load-prefer-newer t)
  #+end_src
 
@@ -67,14 +66,52 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
   (load custom-file :noerror)
  #+END_SRC
 
-
 ** Emacs Path
    Include .bashrc when executing shell commands.
 
    #+begin_src emacs-lisp
      (use-package exec-path-from-shell
      :ensure t
-     :config (exec-path-from-shell-initialize))
+     :config (exec-path-from-shell-initialize)
+     )
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** Tramp
+You can setup some customizations for tramp. In particular, you can setup
+connection parameters.  By default, we want to connect using bash, which allows
+us to include the PATH as defined by bashrc.  I'm not sure about the point in
+using ~use-package~ in this case.  This *seems* to be working, but still doesn't
+fix that fact that ~eglot~ over tramp can't find executables.
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Connection-Local-Variables.html][connection-local-set-profiles]] is a standard emacs setup.  Run
+~tramp-cleanup-all-connections~ if you make some changes here.
+
+   #+begin_src emacs-lisp
+     (use-package tramp
+       :ensure t
+       :config
+            (add-to-list 'tramp-connection-properties
+                         (list (regexp-quote "/ssh:quinn.library.ucdavis.edu:")
+                               "remote-shell" "/usr/bin/bash"))
+       ;; nil selects all
+       (add-to-list 'tramp-connection-properties
+                    (list nil "remote-shell" "/usr/bin/bash"))
+       (connection-local-set-profile-variables
+        'remote-bash
+        '((explicit-shell-file-name . "/bin/bash")
+          (explicit-bash-args . ("-i"))))
+       (connection-local-set-profile-variables
+        'own-remote-path
+        '((tramp-remote-path . (tramp-own-remote-path tramp-default-remote-path))))
+       (connection-local-set-profiles
+        '(:application tramp ) 'own-remote-path)
+       (connection-local-set-profiles
+        '(:application tramp ) 'remote-bash)
+       )
+
    #+end_src
 
    #+RESULTS:
@@ -248,7 +285,6 @@ These are some of the default keystrokes from HRS.
 
 #+RESULTS:
 : org-capture
-
 
 ** Editorconfig
 It's better to use the editorconfig files to set your ending whitespace, tab
@@ -473,6 +509,8 @@ machines that is the ~fonts-inconsolata~ package.
     :delight
     (auto-fill-function ".⏎")
     (js-mode "JS")
+    (sh-mode "SH")
+    (eldoc-mode nil "eldoc")
     :custom
     (find-file-run-dired 1) ;; set to nill to disable
     )
@@ -701,6 +739,42 @@ Sometimes, though, I don't wanna wrap text. This toggles wrapping with =C-c q=:
   (global-set-key (kbd "C-c q") 'auto-fill-mode)
 #+END_SRC
 
+** Helpful
+
+This is an updated help module.  One reason I added it was as a test for a [[*Help transient][Help
+transient]], that uses it.  I guess I should still use the globals to get help at
+a point.
+
+#+begin_src emacs-lisp
+    (use-package helpful
+      :config
+  ;; Note that the built-in `describe-function' includes both functions
+  ;; and macros. `helpful-function' is functions only, so we provide
+  ;; `helpful-callable' as a drop-in replacement.
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+
+  ;; Lookup the current symbol at point. C-c C-d is a common keybinding
+  ;; for this in lisp modes.
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+  ;; Look up *F*unctions (excludes macros).
+  ;;
+  ;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+  ;; already links to the manual, if a function is referenced there.
+  (global-set-key (kbd "C-h F") #'helpful-function)
+
+  ;; Look up *C*ommands.
+  ;;
+  ;; By default, C-h C is bound to describe `describe-coding-system'. I
+  ;; don't find this very useful, but it's frequently useful to only
+  ;; look at interactive functions.
+  (global-set-key (kbd "C-h C") #'helpful-command)
+      )
+#+end_src
+
 * Org Mode
 
 Custom vars: use a UTF-8 arrow, instead of the usual ellipsis (=...=) that org
@@ -729,7 +803,7 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
     :after org
     :custom
     (org-capture-templates
-     '(("t" "Todo" entry (file+headline "gtd.org" "Tasks")
+     '(("T" "Todo" entry (file+headline "gtd.org" "Tasks")
         "* TODO %?\n  %i\n  %a")))
     )
 
@@ -831,7 +905,6 @@ citations, then.
 * TODO [[https://docs.projectile.mx/projectile/installation.html][=Projectile=]]
 
 * Programming
-
 ** Magit
 
 There are some suggestions from [[https://github.com/hrs/dotfiles/blob/main/emacs/.config/emacs/configuration.org#magit][HRS]], [[https://github.com/bradwright/emacs-d/blob/master/packages/init-magit.el][bradwright]], about good ways to use this, although I'm
@@ -853,6 +926,34 @@ not sure about the
 
 #+end_src
 
+** flymake/flycheck
+
+#+begin_src emacs-lisp
+  (use-package flymake
+  :config
+  (setq flymake-mode-line-title "x")
+  )
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+#+end_src
+
+#+RESULTS:
+: q
+
+I've turned off global flychecking mode, to better test eglot as a checker.
+
+#+begin_src emacs-lisp
+;;(use-package flycheck
+;;  :ensure t
+;;  :init (global-flycheck-mode))
+#+end_src
+
+#+RESULTS:
+
 ** LSP-mode
 There are two competing Language server implementations, =lsp-mode= and
 [[https://github.com/joaotavora/eglot][=elgot=]].
@@ -870,11 +971,11 @@ There are two competing Language server implementations, =lsp-mode= and
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+;;(use-package lsp-ui :commands lsp-ui-mode)
+;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;; optionally if you want to use debugger
-(use-package dap-mode)
+;; (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 ;; optional if you want which-key integration
@@ -886,11 +987,16 @@ There are two competing Language server implementations, =lsp-mode= and
 #+RESULTS:
 : t
 
-*** =elgot=
+** =elgot=
     2022-12-20 =elgot= is or soon will be supported directly in EMACS base, so it's seems
     like it's making a large splash in the community.  For using javascript I
     also needed to do ~snap install typescript-language-server~ in order to get
     the javascript supported.
+
+    I was having trouble getting good intergration w/ the bash-language-server,
+    but it turns out that was just because I didn't have shellcheck installed,
+    which provides alot of the functionality.
+
 
    #+begin_src emacs-lisp
      (use-package eglot
@@ -898,7 +1004,6 @@ There are two competing Language server implementations, =lsp-mode= and
    #+end_src
 
    #+RESULTS:
-
 
 ** SQL Mode
    We can use the standard sql-mode, but we really need to add in the sql-indent
@@ -920,6 +1025,56 @@ There are two competing Language server implementations, =lsp-mode= and
 :ensure sparql-mode
 )
 #+END_SRC
+
+** Co-pilot
+
+We should try and use co-pilot via emacs [[https://www.irfanhabib.com/2022-04-26-setting-up-github-copilot-in-emacs/][tutorial]]
+
+#+begin_src emacs-lisp
+  ;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+        (use-package copilot
+        :straight (:host github :repo "zerolfx/copilot.el"
+                         :files ("dist" "copilot.el"))
+        :ensure t
+        :config
+        (add-hook 'prog-mode-hook 'copilot-mode)
+        )
+#+end_src
+
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+  (defun my/copilot-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (indent-for-tab-command)))
+
+(with-eval-after-load 'copilot
+   (define-key copilot-mode-map (kbd "<tab>") #'my/copilot-tab))
+#+end_src
+
+#+RESULTS:
+: my/copilot-tab
 
 ** JSON
 
@@ -1009,3 +1164,199 @@ Associate the "dot" language with the =graphviz-dot= major mode.
   (use-package graphviz-dot-mode)
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 #+end_src
+
+* Transients
+
+#+begin_src emacs-lisp
+  (use-package transient)
+#+end_src
+
+** Help transient
+
+This example found on [[https://www.reddit.com/r/emacs/comments/f3o0v8/anyone_have_good_examples_for_transient/][reddit]].  It's a good lisp internal example.
+
+#+begin_src emacs-lisp
+    (define-transient-command hrm-help-transient ()
+    "Help commands that I use. A subset of C-h with others thrown in."
+    ["Help Commands"
+     ["Mode & Bindings"
+      ("m" "Mode" describe-mode)
+      ("b" "Major Bindings" which-key-show-full-major-mode)
+      ("B" "Minor Bindings" which-key-show-full-minor-mode-keymap)
+      ("d" "Descbinds" counsel-descbinds)
+      ("t" "Top Bindings  " which-key-show-top-level)
+      ]
+     ["Describe"
+      ("C" "Command" helpful-command)
+      ("f" "Function" helpful-callable)
+      ("v" "Variable" helpful-variable)
+      ("k" "Key" helpful-key)
+      ("c" "Key Briefly" describe-key-briefly)
+      ]
+     ["Info on"
+      ("C-c" "Emacs Command" Info-goto-emacs-command-node)
+      ("C-f" "Function" counsel-info-lookup-symbol) ; s for symbol?
+      ("C-v" "Variable" counsel-info-lookup-symbol) ; . for symbol?
+      ("C-k" "Emacs Key" Info-goto-emacs-key-command-node)
+      ]
+     ["Goto Source"
+      ("L" "Library" find-library-other-frame)
+      ("F" "Function" find-function-other-frame)
+      ("V" "Variable" find-variable-other-frame)
+      ("K" "Key" find-function-on-key-other-frame)
+      ]
+     ]
+    [
+     ["Internals"
+      ("I" "Input Method" describe-input-method)
+      ("G" "Language Env" describe-language-environment)
+      ("S" "Syntax" describe-syntax)
+      ("O" "Coding System" describe-coding-system)
+      ("C-o" "Coding Brief" describe-current-coding-system-briefly)
+      ("T" "Display Table" describe-current-display-table)
+      ("e" "Echo Messages" view-echo-area-messages)
+      ("l" "Lossage" view-lossage)
+      ]
+     ["Describe"
+      ("s" "Symbol" helpful-symbol)
+      ("." "At Point   " helpful-at-point)
+      ("C-f" "Face" counsel-describe-face)
+      ("w" "Where Is" where-is)
+      ("=" "Position" what-cursor-position)
+      ]
+;;     ["Info Manuals"
+;;      ("C-i" "Info" info)
+;;      ("C-4" "Other Window " info-other-window)
+;;      ("C-e" "Emacs" info-emacs-manual)
+;;      ("C-l" "Elisp" info-elisp-manual)
+;;      ]
+;;     ["External"
+;;      ("W" "Dictionary" lookup-word-at-point)
+;;      ("D" "Dash" dash-at-point)
+;;      ]
+     ]
+    )
+  (global-set-key (kbd "C-S-h") 'hrm-help-transient)
+#+end_src
+
+
+** pmx-transient-toy
+
+#+begin_src emacs-lisp
+      (require 'cl-lib)
+
+    (transient-define-suffix pmx-show-prefix ()
+      "Show the prefix that invoked this suffix"
+      :description "prefix"
+      (interactive)
+      (message "Current prefix key: %s" transient-current-prefix))
+
+    (transient-define-suffix pmx-show-command ()
+      "Show this command"
+      :description "current command"
+      (interactive)
+      (message "Current command: %s" transient-current-command))
+
+    (transient-define-suffix pmx-show-suffixes ()
+      "Show the current suffixes"
+      :description "suffixes"
+      (interactive)
+      (message "Current suffixes: %s" (cl-mapcar
+                                       (lambda (obj)
+                                         (oref obj description))
+                                       transient-current-suffixes)))
+
+    (transient-define-suffix pmx-show-args ()
+      "Show current infix args"
+      :description "infix args"
+      (interactive)
+      (message "Current infix args: %s" (transient-args transient-current-command)))
+
+    (transient-define-suffix pmx-send-message ()
+      "Send message to minibuffer"
+      :description "send message"
+      :transient t
+      (interactive)
+      (message "Message sent at %s. Happy?" (shell-command-to-string "echo -n $(date)")))
+
+    (transient-define-argument pmx-affirmative ()
+      "Are we affirmative?"
+      :description "affirmative"
+      :argument "affirmative")
+
+    (transient-define-argument pmx-yep-nope ()
+      "Is it yep or is it nope?"
+      :description "yep or nope"
+      :class 'transient-option
+      :shortarg "-y"
+      :argument "--yepnope="
+      :choices '("yep" "nope"))
+
+    (transient-define-argument pmx-abc ()
+      "Which letters do you like?"
+      :description "abc"
+      :class 'transient-option
+      :shortarg "-a"
+      :argument "--abc="
+      :choices '("A" "B" "C"))
+
+    (defvar pmx--variable "A string" "A variable brought to you by pmx")
+
+    (transient-define-argument pmx-set-lisp-variable ()
+      "Set a lisp variable, pmx--variable.  Won't show up in infix arguments."
+      :description "set pmx--variable"
+      :class 'transient-lisp-variable
+      :shortarg "-l"
+      :variable 'pmx--variable
+      :argument "--letters=")
+
+    (transient-define-suffix pmx-show-lisp-variable ()
+      "Access pmx--variable"
+      :description "show pmx--variable"
+      (interactive)
+      (message "Current value of pmx--variable: %s" pmx--variable))
+
+    (transient-define-suffix pmx-dynamic-suffix ()
+      "Description depends on pmx--variable"
+      :if-not '(lambda () (string-equal pmx--variable "abc"))
+      :description '(lambda () (format "pmx %s" pmx--variable))
+      (interactive)
+      (message "Current value of pmx--variable: %s" pmx--variable))
+
+    (transient-define-prefix pmx-nested-transient ()
+      "Some subcommands, like tree menus from the land of mice"
+      ["Switches"
+       ("-s" "another switch" ("-x" "--conflicting"))]
+      ["Sub Command Introspection"
+       ("i" pmx-show-args)
+       ("p" pmx-show-prefix)
+       ("s" pmx-show-suffixes)
+       ("c" pmx-show-command)]
+      ["Dynamic Commands"
+       ("d" pmx-dynamic-suffix)])
+
+    (transient-define-prefix pmx-transient-toy ()
+      "Figure out how to use transient's API properly"
+      [:class transient-columns
+       ["Things"
+        ("-w" "switch"  ("-w" "--switch"))]
+       ["Others"
+        ("i" pmx-show-args)
+        ("p" pmx-show-prefix)
+        ("s" pmx-show-suffixes)
+        ("c" pmx-show-command)
+        ("m" pmx-send-message)]
+       ["More"
+        ("f" pmx-affirmative)
+        ("y" pmx-yep-nope)
+        ("a" pmx-abc)
+        ("l" pmx-set-lisp-variable)
+        ("w" pmx-show-lisp-variable)]
+       ["Drilldown"
+        ("d" "drilldown" pmx-nested-transient)]])
+
+    (global-set-key (kbd "M-o") 'pmx-transient-toy)
+#+end_src
+
+#+RESULTS:
+: pmx-transient-toy
