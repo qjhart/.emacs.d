@@ -98,7 +98,7 @@ fix that fact that ~eglot~ over tramp can't find executables.
                                "remote-shell" "/usr/bin/bash"))
        ;; nil selects all
        (add-to-list 'tramp-connection-properties
-                    (list nil "remote-shell" "/usr/bin/bash"))
+                    (list nil "remote-shell" "/bin/bash"))
        (connection-local-set-profile-variables
         'remote-bash
         '((explicit-shell-file-name . "/bin/bash")
@@ -911,20 +911,25 @@ There are some suggestions from [[https://github.com/hrs/dotfiles/blob/main/emac
 not sure about the
 
 #+begin_src emacs-lisp
-    (use-package magit
+  (use-package magit
     :bind (("C-c g" . magit-status)
            ("C-c C-g l" . magit-file-log)
            ("C-c f" . magit-grep))
 
     :config
-  ;  (use-package git-commit)
-  ;  (use-package magit-section)
-  ;  (use-package with-editor)
+                                          ;  (use-package git-commit)
+                                          ;  (use-package magit-section)
+                                          ;  (use-package with-editor)
+    (magit-add-section-hook 'magit-status-sections-hook 'magit-insert-modules-overview 'append t)
 
-    (setq magit-push-always-verify nil
-          git-commit-summary-max-length 50))
+    (setq magit-push-always-verify t
+          git-commit-summary-max-length 50)
+    )
 
 #+end_src
+
+#+RESULTS:
+: magit-grep
 
 ** flymake/flycheck
 
@@ -1181,12 +1186,14 @@ Associate the "dot" language with the =graphviz-dot= major mode.
   (use-package transient)
 #+end_src
 
+#+RESULTS:
+
 ** Help transient
 
 This example found on [[https://www.reddit.com/r/emacs/comments/f3o0v8/anyone_have_good_examples_for_transient/][reddit]].  It's a good lisp internal example.
 
 #+begin_src emacs-lisp
-    (define-transient-command hrm-help-transient ()
+    (transient-define-prefix hrm-help-transient ()
     "Help commands that I use. A subset of C-h with others thrown in."
     ["Help Commands"
      ["Mode & Bindings"
@@ -1249,6 +1256,8 @@ This example found on [[https://www.reddit.com/r/emacs/comments/f3o0v8/anyone_ha
   (global-set-key (kbd "C-S-h") 'hrm-help-transient)
 #+end_src
 
+#+RESULTS:
+: hrm-help-transient
 
 ** pmx-transient-toy
 
