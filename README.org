@@ -1115,6 +1115,25 @@ feature, you can also use eshell within a tramp docker session.
 
 #+RESULTS:
 
+** ts-fold
+
+   This seems to be the best folding setup.
+
+   #+begin_src emacs-lisp
+     (straight-use-package 'tree-sitter)
+     (straight-use-package 'tree-sitter-langs)
+        #+end_src
+
+        #+RESULTS:
+        : t
+
+   #+begin_src emacs-lisp
+     (use-package ts-fold
+       :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
+   #+end_src
+
+   #+RESULTS:
+
 * Babel
 Second only to org-mode, =babel= is the greatest component for literate
 programming, it allows for multiple languages to be added to SRC blocks.
@@ -1188,6 +1207,34 @@ Associate the "dot" language with the =graphviz-dot= major mode.
 #+end_src
 
 #+RESULTS:
+
+** ts-fold
+
+   I'm building this out myself
+
+   #+begin_src emacs-lisp
+     (transient-define-prefix ts-fold-transient()
+      "Program folding"
+      ["Folding Commands"
+       ("c" "close" ts-fold-close)
+       ("C-o" "open recursively"  ts-fold-open-recursively)
+       ("o" "open"  ts-fold-open)
+       ("O" "open all"  ts-fold-open-all)
+       ("<tab>" "toggle" ts-fold-toggle)
+       ]
+      ["Mode Setup"
+       ("m" "mode" tree-sitter-mode)
+       ]
+      )
+     (global-set-key (kbd "C-c f") 'ts-fold-transient)
+     (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
+;;     (global-set-key (kbd "C-<tab>") 'ts-fold-toggle)
+     ;; Need to add keychord
+;;     (global-set-key (kbd "C-<tab> C-<tab>") 'ts-fold-open-all)
+   #+end_src
+
+   #+RESULTS:
+   : ts-fold-toggle
 
 ** Help transient
 
