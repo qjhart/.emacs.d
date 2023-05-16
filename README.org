@@ -57,6 +57,25 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
  (use-package delight)
  #+END_SRC
 
+** Configure w/ straight.el
+   We also use-package w/ straight as well, co-pilot eg.
+
+   #+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+
 ** Custom Auto-generated customizations
  I don't want any customizations stored in my ~init.el~ file, that just
  confuses things.  Instead store it seperately.
@@ -257,34 +276,48 @@ These are some various extensions that are commonly used.
 
 ** Set Keys
 
-Here are some of the common keybindings from =crux=
+   In addition to normal set keys,  we also want to use keychord extensions
 
-#+BEGIN_SRC emacs-lisp
-;;(global-set-key (kbd "C-k") 'crux-smart-kill-line)
-#+END_SRC
+   #+begin_src emacs-lisp
+     (use-package key-chord
+       :init
+       (key-chord-mode 1)
+       :custom
+       (key-chord-two-keys-delay 0.1) ; default 0.1
+       (key-chord-one-key-delay 0.2) ; default 0.2
+       )
+   #+end_src
 
-Assume that I always want to kill the current buffer when hitting =C-x k=.
+   #+RESULTS:
 
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
-#+END_SRC
+ Here are some of the common keybindings from =crux=
 
-Use System style =C-x= =C-c= =C-v=.
+ #+BEGIN_SRC emacs-lisp
+ ;;(global-set-key (kbd "C-k") 'crux-smart-kill-line)
+ #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (cua-mode t)
-#+END_SRC
+ Assume that I always want to kill the current buffer when hitting =C-x k=.
 
-These are some of the default keystrokes from HRS.
+ #+BEGIN_SRC emacs-lisp
+   (global-set-key (kbd "C-x k") 'hrs/kill-current-buffer)
+ #+END_SRC
 
-#+begin_src emacs-lisp
-  (define-key global-map "\C-cl" 'org-store-link)
-  (define-key global-map "\C-ca" 'org-agenda)
-  (define-key global-map "\C-cc" 'org-capture)
-#+end_src
+ Use System style =C-x= =C-c= =C-v=.
 
-#+RESULTS:
-: org-capture
+ #+BEGIN_SRC emacs-lisp
+   (cua-mode t)
+ #+END_SRC
+
+ These are some of the default keystrokes from HRS.
+
+ #+begin_src emacs-lisp
+   (define-key global-map "\C-cl" 'org-store-link)
+   (define-key global-map "\C-ca" 'org-agenda)
+   (define-key global-map "\C-cc" 'org-capture)
+ #+end_src
+
+ #+RESULTS:
+ : org-capture
 
 ** Editorconfig
 It's better to use the editorconfig files to set your ending whitespace, tab
@@ -524,26 +557,26 @@ pattern. [[https://karthinks.com/software/avy-can-do-anything/][Avy can do anyth
 The ~avy-setup-default~ binds ~C-'~ to avy-search in isearch.
 
 #+begin_src emacs-lisp
-  (use-package avy
-    :ensure t
-;;    :config
-;;    (avy-setup-default)
-    :custom
-    (avy-timeout-seconds 0.5)
-    :bind
-    (
-     ;;("C-c C-j" . avy-resume)
-     ("C-;" . avy-resume)
-     ("C-:" . avy-goto-char-timer)
-     :map isearch-mode-map
-     ("C-'" . avy-search)
+    (use-package avy
+      :ensure t
+  ;;    :config
+  ;;    (avy-setup-default)
+      :custom
+      (avy-timeout-seconds 0.5)
+      :bind
+      (
+       ;;("C-c C-j" . avy-resume)
+       ("C-;" . avy-resume)
+       ("C-:" . avy-goto-char-timer)
+       :map isearch-mode-map
+       ("C-'" . avy-isearch)
 
-     )
-    )
+       )
+      )
 #+end_src
 
 #+RESULTS:
-: avy-search
+: avy-isearch
 
 ** [[ https://github.com/minad/vertico][Vertico]]
 
@@ -1037,25 +1070,6 @@ There are two competing Language server implementations, =lsp-mode= and
 We should try and use co-pilot via emacs [[https://www.irfanhabib.com/2022-04-26-setting-up-github-copilot-in-emacs/][tutorial]]
 
 #+begin_src emacs-lisp
-  ;; Install straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-#+end_src
-
-#+RESULTS:
-: t
-
-#+begin_src emacs-lisp
         (use-package copilot
         :straight (:host github :repo "zerolfx/copilot.el"
                          :files ("dist" "copilot.el"))
@@ -1129,10 +1143,50 @@ feature, you can also use eshell within a tramp docker session.
 
    #+begin_src emacs-lisp
      (use-package ts-fold
-       :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
+       :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
+       )
    #+end_src
 
-   #+RESULTS:
+
+*** Keystrokes
+
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
+;;      (key-chord-define-global ""  'ts-fold-open-all)
+    #+end_src
+
+    #+RESULTS:
+    : ts-fold-toggle
+
+
+    I'm building this out myself
+
+    #+begin_src emacs-lisp
+      (transient-define-prefix ts-fold-transient()
+       "Program folding"
+       ["Folding Commands"
+        ("c" "close" ts-fold-close)
+        ("C-o" "open recursively"  ts-fold-open-recursively)
+        ("o" "open"  ts-fold-open)
+        ("O" "open all"  ts-fold-open-all)
+        ("<tab>" "toggle" ts-fold-toggle)
+        ]
+       ["Mode Setup"
+        ("m" "mode" tree-sitter-mode)
+        ]
+       )
+      (global-set-key (kbd "C-c f") 'ts-fold-transient)
+      (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
+ ;;     (global-set-key (kbd "C-<tab>") 'ts-fold-toggle)
+      ;; Need to add keychord
+ ;;     (global-set-key (kbd "C-<tab> C-<tab>") 'ts-fold-open-all)
+    #+end_src
+
+    #+RESULTS:
+    : ts-fold-toggle
+
+
+    #+RESULTS:
 
 * Babel
 Second only to org-mode, =babel= is the greatest component for literate
@@ -1208,33 +1262,6 @@ Associate the "dot" language with the =graphviz-dot= major mode.
 
 #+RESULTS:
 
-** ts-fold
-
-   I'm building this out myself
-
-   #+begin_src emacs-lisp
-     (transient-define-prefix ts-fold-transient()
-      "Program folding"
-      ["Folding Commands"
-       ("c" "close" ts-fold-close)
-       ("C-o" "open recursively"  ts-fold-open-recursively)
-       ("o" "open"  ts-fold-open)
-       ("O" "open all"  ts-fold-open-all)
-       ("<tab>" "toggle" ts-fold-toggle)
-       ]
-      ["Mode Setup"
-       ("m" "mode" tree-sitter-mode)
-       ]
-      )
-     (global-set-key (kbd "C-c f") 'ts-fold-transient)
-     (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
-;;     (global-set-key (kbd "C-<tab>") 'ts-fold-toggle)
-     ;; Need to add keychord
-;;     (global-set-key (kbd "C-<tab> C-<tab>") 'ts-fold-open-all)
-   #+end_src
-
-   #+RESULTS:
-   : ts-fold-toggle
 
 ** Help transient
 
