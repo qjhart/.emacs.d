@@ -1131,11 +1131,11 @@ feature, you can also use eshell within a tramp docker session.
 
 #+RESULTS:
 
-** ts-fold
+** Tree sitter packages
 
-   This seems to be the best folding setup.
+   These have been incorporated into emacs 29, but not yet supported by ts-fold
 
-   #+begin_src emacs-lisp
+      #+begin_src emacs-lisp
      (straight-use-package 'tree-sitter)
      (straight-use-package 'tree-sitter-langs)
         #+end_src
@@ -1143,25 +1143,31 @@ feature, you can also use eshell within a tramp docker session.
         #+RESULTS:
         : t
 
-   #+begin_src emacs-lisp
-     (use-package ts-fold
-       :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
-       )
-   #+end_src
 
+*** ts-fold
 
-*** Keystrokes
+    This seems to be the best folding setup.
 
     #+begin_src emacs-lisp
-      (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
-;;      (key-chord-define-global ""  'ts-fold-open-all)
+      (use-package ts-fold
+        :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
+        )
     #+end_src
 
-    #+RESULTS:
-    : ts-fold-toggle
+
+**** Keystrokes
+
+     #+begin_src emacs-lisp
+       (global-set-key (kbd "M-<tab>") 'ts-fold-toggle)
+ ;;      (key-chord-define-global ""  'ts-fold-open-all)
+     #+end_src
+
+     #+RESULTS:
+     : ts-fold-toggle
 
 
-    I'm building a transient for [[*Code Folding][Code Folding]].
+     I'm building a transient for [[*Code Folding][Code Folding]].
+
 
 * Babel
 Second only to org-mode, =babel= is the greatest component for literate
