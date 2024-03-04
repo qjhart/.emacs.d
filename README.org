@@ -1181,35 +1181,46 @@ emacs now.
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
     #+end_src
 
+    Treesiter is built in now, but I need to setup the proper modes for that package.
+
+#+begin_src  emacs-lisp
+  ;;  (use-package treesit
+  ;;  :mode (("\\.tsx\\'" . tsx-ts-mode))
+  ;;  :config
+    ;; Do not forget to customize Combobulate to your liking:
+    ;;
+    ;;  M-x customize-group RET combobulate RET
+    ;;
+;; )
+#+end_src
+
 
 *** Combobulate
 
+Treesiter is built in now, but I need to setup the proper modes for that package.
+
 #+begin_src  emacs-lisp
-  (use-package treesit
-  :mode (("\\.tsx\\'" . tsx-ts-mode))
-  :config
-  ;; Do not forget to customize Combobulate to your liking:
-  ;;
-  ;;  M-x customize-group RET combobulate RET
-  ;;
   (use-package combobulate
     :preface
     ;; You can customize Combobulate's key prefix here.
     ;; Note that you may have to restart Emacs for this to take effect!
     (setq combobulate-key-prefix "C-c o")
     :hook
-      ((python-ts-mode . combobulate-mode)
-       (js-ts-mode . combobulate-mode)
-       (html-ts-mode . combobulate-mode)
-       (css-ts-mode . combobulate-mode)
-       (yaml-ts-mode . combobulate-mode)
-       (typescript-ts-mode . combobulate-mode)
-       (json-ts-mode . combobulate-mode)
-       (tsx-ts-mode . combobulate-mode))
+    ((python-ts-mode . combobulate-mode)
+     (js-ts-mode . combobulate-mode)
+     (html-ts-mode . combobulate-mode)
+     (css-ts-mode . combobulate-mode)
+     (yaml-ts-mode . combobulate-mode)
+     (typescript-ts-mode . combobulate-mode)
+     (json-ts-mode . combobulate-mode)
+     (tsx-ts-mode . combobulate-mode))
     ;; Amend this to the directory where you keep Combobulate's source
     ;; code.
-    :load-path ("combobulate")))
+    :load-path ("combobulate"))
 #+end_src
+
+#+RESULTS:
+| combobulate-mode |
 
 
 *** ts-fold
