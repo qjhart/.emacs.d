@@ -911,14 +911,18 @@ I found this really great looking [[https://github.com/Chobbes/org-chef][recipe 
        ;; Open today's journal, but specify a non-nil prefix argument in order to
        ;; inhibit inserting the heading; org-capture will insert the heading.
        (org-journal-new-entry t)
-       (unless (eq org-journal-file-type 'daily)
+       (unless (or
+                (eq org-journal-file-type 'daily)
+                (eq org-journal-file-type 'weekly))
          (org-narrow-to-subtree))
        (goto-char (point-max)))
      (defun org-journal-date-location (&optional scheduled-time)
        (let ((scheduled-time (or scheduled-time (org-read-date nil nil nil "Date:"))))
          (setq org-journal--date-location-scheduled-time scheduled-time)
          (org-journal-new-entry t (org-time-string-to-time scheduled-time))
-         (unless (eq org-journal-file-type 'daily)
+         (unless (or
+                  (eq org-journal-file-type 'daily)
+                  (eq org-journal-file-type 'weekly))
            (org-narrow-to-subtree))
          (goto-char (point-max))))
      :custom
