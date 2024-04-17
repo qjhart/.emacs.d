@@ -1157,13 +1157,9 @@ n
 
 There are a few things that make life more simple in docker.  One of them is
 being able to easily [[https://ligerlearn.com/using-emacs-edit-files-within-docker-containers/][edit files within a container.]]  This is a super great
-feature, you can also use eshell within a tramp docker session.
+feature, you can also use eshell within a tramp docker session.   This is
+standard in emacs now
 
-#+begin_src emacs-lisp
-;;  (use-package docker-tramp)
-#+end_src
-
-#+RESULTS:
 
 ** Tree sitter packages
 
