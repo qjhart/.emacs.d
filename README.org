@@ -833,6 +833,10 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
                   (org-agenda-files '("~/.org/"))
                   )
 
+  (use-package org-capture
+    :ensure nil
+    :after org
+    )
   (require 'ox-md)
 #+end_src
 
