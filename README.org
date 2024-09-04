@@ -903,10 +903,6 @@ I found this really great looking [[https://github.com/Chobbes/org-chef][recipe 
    currently expecting that
 
    #+begin_src emacs-lisp
-     (org-journal-date-location)
-   #+end_src
-
-   #+begin_src emacs-lisp
      (use-package org-journal
      :ensure t
      :demand t
