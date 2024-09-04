@@ -903,6 +903,10 @@ I found this really great looking [[https://github.com/Chobbes/org-chef][recipe 
    currently expecting that
 
    #+begin_src emacs-lisp
+     (org-journal-date-location)
+   #+end_src
+
+   #+begin_src emacs-lisp
      (use-package org-journal
      :ensure t
      :demand t
@@ -927,10 +931,10 @@ I found this really great looking [[https://github.com/Chobbes/org-chef][recipe 
          (goto-char (point-max))))
      :custom
      (org-journal-prefix-key "C-c j ")
-     (org-journal-file-type 'weekly)
+     (org-journal-file-type 'daily)
      (org-journal-dir "~/.org/journal")
-     (org-journal-file-format "%Y/%Y%m%d")
-     (org-journal-date-format "%A, %d %B %Y")
+     (org-journal-file-format "%Y/%m/%Y%m%d")
+     (org-journal-date-format "%A,%Y%m%d")
      (org-journal-enable-agenda-integration t)
      :config
      (add-to-list 'auto-mode-alist '("~.org/journal/[0-9]*$" . org-mode))
