@@ -42,6 +42,9 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
    (setq use-package-always-ensure t)
  #+end_src
 
+ #+RESULTS:
+ : t
+
  Always compile packages, and use the newest version available.
 
  #+begin_src emacs-lisp
@@ -54,26 +57,28 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
  =use-package= configurations.  This allows us to set minor visibility on here.
 
  #+BEGIN_SRC emacs-lisp
- (use-package delight)
+ (use-package delight :ensure t)
  #+END_SRC
+
+ #+RESULTS:
 
 ** Configure w/ straight.el
    We also use-package w/ straight as well, co-pilot eg.
 
-   #+begin_src emacs-lisp
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-#+end_src
+#    #+begin_src emacs-lisp
+# (defvar bootstrap-version)
+# (let ((bootstrap-file
+#        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+#       (bootstrap-version 5))
+#   (unless (file-exists-p bootstrap-file)
+#     (with-current-buffer
+#         (url-retrieve-synchronously
+#          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+#          'silent 'inhibit-cookies)
+#       (goto-char (point-max))
+#       (eval-print-last-sexp)))
+#   (load bootstrap-file nil 'nomessage))
+# #+end_src
 
 
 ** Custom Auto-generated customizations
@@ -526,11 +531,11 @@ machines that is the ~fonts-inconsolata~ package.
 =moody= gives a truly lovely ribbon-based modeline.
 
 #+begin_src emacs-lisp
+  (setq-default mode-line-format (delete '(vc-mode vc-mode) mode-line-format))
   (use-package moody
     :config
     (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+    (moody-replace-mode-line-buffer-identification))
 #+end_src
 
 #+RESULTS:
@@ -1014,56 +1019,114 @@ I've turned off global flychecking mode, to better test eglot as a checker.
 
 #+RESULTS:
 
-** LSP-mode
-There are two competing Language server implementations, =lsp-mode= and
-[[https://github.com/joaotavora/eglot][=elgot=]].
+** Debugging
+    There are two competing Language server implementations, =lsp-mode= and
+ [[https://github.com/joaotavora/eglot][=elgot=]], as well as the debugger =dape=
+
+*** LSP-mode
+ # #+begin_src emacs-lisp
+ # (use-package lsp-mode
+ #   :init
+ #   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+ #   (setq lsp-keymap-prefix "C-c l")
+ #   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+ #          (XXX-mode . lsp)
+ #          ;; if you want which-key integration
+ #          (lsp-mode . lsp-enable-which-key-integration))
+ #   :commands lsp)
+
+ # ;; optionally
+ # ;;(use-package lsp-ui :commands lsp-ui-mode)
+ # ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+ # ;; optionally if you want to use debugger
+ # ;; (use-package dap-mode)
+ # ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+ # ;; optional if you want which-key integration
+ # (use-package which-key
+ #     :config
+ #     (which-key-mode))
+ # #+end_src
+
+ #+RESULTS:
+ : t
+
+*** =dape=
+
+    [[https://github.com/svaante/dape][dape]] is a debugger. I followed their install instructions for javascript,
+    js-debug-dap-v1.94.0.tar.gz.
+
+  #+begin_src emacs-lisp
+    (use-package dape
+      :preface
+      ;; By default dape shares the same keybinding prefix as `gud'
+      ;; If you do not want to use any prefix, set it to nil.
+      ;; (setq dape-key-prefix "\C-x\C-a")
+
+      ;;:hook
+      ;; Save breakpoints on quit
+      ;; ((kill-emacs . dape-breakpoint-save)
+      ;; Load breakpoints on startup
+      ;;  (after-init . dape-breakpoint-load))
+
+      :config
+      ;; Turn on global bindings for setting breakpoints with mouse
+      ;; (dape-breakpoint-global-mode)
+
+      ;; Info buffers to the right
+      ;; (setq dape-buffer-window-arrangement 'right)
+
+      ;; Info buffers like gud (gdb-mi)
+      ;; (setq dape-buffer-window-arrangement 'gud)
+      ;; (setq dape-info-hide-mode-line nil)
+
+      ;; Pulse source line (performance hit)
+      ;; (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+
+      ;; Showing inlay hints
+      ;; (setq dape-inlay-hints t)
+
+      ;; Save buffers on startup, useful for interpreted languages
+      ;; (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
+
+      ;; Kill compile buffer on build success
+      ;; (add-hook 'dape-compile-hook 'kill-buffer)
+
+      ;; Projectile users
+      ;; (setq dape-cwd-fn 'projectile-project-root)
+      )
+
+    ;; Enable repeat mode for more ergonomic `dape' use
+    (use-package repeat
+      :config
+      (repeat-mode))
+    #+end_src
+
+    #+RESULTS:
+    : t
+
+*** =elgot=
+     2022-12-20 =elgot= is or soon will be supported directly in EMACS base, so it's seems
+     like it's making a large splash in the community.  For using javascript I
+     also needed to do ~snap install typescript-language-server~ in order to get
+     the javascript supported.
+
+     I was having trouble getting good intergration w/ the bash-language-server,
+     but it turns out that was just because I didn't have shellcheck installed,
+     which provides alot of the functionality.
 
 
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (XXX-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
-
-;; optionally
-;;(use-package lsp-ui :commands lsp-ui-mode)
-;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-;; (use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; optional if you want which-key integration
-(use-package which-key
-    :config
-    (which-key-mode))
-#+end_src
-
-#+RESULTS:
-: t
-
-** =elgot=
-    2022-12-20 =elgot= is or soon will be supported directly in EMACS base, so it's seems
-    like it's making a large splash in the community.  For using javascript I
-    also needed to do ~snap install typescript-language-server~ in order to get
-    the javascript supported.
-
-    I was having trouble getting good intergration w/ the bash-language-server,
-    but it turns out that was just because I didn't have shellcheck installed,
-    which provides alot of the functionality.
+    #+begin_src emacs-lisp
+      (use-package eglot
+        )
+      (add-to-list 'major-mode-remap-alist '(js-mode . js-ts-mode))
+      (add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
+    #+end_src
 
 
-   #+begin_src emacs-lisp
-     (use-package eglot
-       )
-   #+end_src
-
-   #+RESULTS:
+    #+RESULTS:
+    : ((bash-mode . bash-ts-mode) (js-mode . js-ts-mode))
 
 ** SQL Mode
    We can use the standard sql-mode, but we really need to add in the sql-indent
@@ -1076,46 +1139,77 @@ There are two competing Language server implementations, =lsp-mode= and
 
 ** Sparql / TTL /TRIG
 
+I think that sparql-mode just assumes that ob-http (which is super old), just
+exists.
+#+begin_src emacs-lisp
+  (use-package ob-http)
+#+end_src
+
+
 #+BEGIN_SRC emacs-lisp
-(use-package sparql-mode
-:mode (( "\\.sparql$" . sparql-mode )
-( "\\.ru$" . sparql-mode )
-( "\\.rq$" . sparql-mode )
-)
-:ensure sparql-mode
-)
+  (use-package sparql-mode
+  :mode (( "\\.sparql$" . sparql-mode )
+  ( "\\.ru$" . sparql-mode )
+  ( "\\.rq$" . sparql-mode )
+  )
+  :ensure sparql-mode
+  )
 #+END_SRC
+
+#+RESULTS:
+: ((\.jq$ . jq-mode) (\.jq\' . jq-mode) (\.json(ld)?$ . json-mode) (\(?:\(?:\.\(?:b\(?:\(?:abel\|ower\)rc\)\|json\(?:ld\)?\)\|composer\.lock\)\'\) . json-mode) (\.rq$ . sparql-mode) (\.ru$ . sparql-mode) (\.sparql$ . sparql-mode) (/git-rebase-todo\' . git-rebase-mode) (~.org/journal/[0-9]*$ . org-mode) (\.org$ . org-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|axlsx\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Brew\|Fast\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (/\(?:Pipfile\|\.?flake8\)\' . conf-mode) (\(?:\.\(?:p\(?:th\|y[iw]?\)\)\|/\(?:SCons\(?:\(?:crip\|truc\)t\)\)\)\' . python-mode) (\.m\' . octave-maybe-mode) (\.less\' . less-css-mode) (\.editorconfig\' . editorconfig-conf-mode) (\.scss\' . scss-mode) (\.cs\' . csharp-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.webp\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.dir-locals\(?:-2\)?\.el\' . lisp-data-mode) (\.eld\' . lisp-data-mode) (eww-bookmarks\' . lisp-data-mode) (tramp\' . lisp-data-mode) (/archive-contents\' . lisp-data-mode) (places\' . lisp-data-mode) (\.emacs-places\' . lisp-data-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\(?:\.\(?:scm\|sls\|sld\|stk\|ss\|sch\)\|/\.guile\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (/bash-fc\.[0-9A-Za-z]\{6\}\' . sh-mode) (/PKGBUILD\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\(acinclude\|aclocal\|acsite\)\.m4\' . autoconf-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|squashfs\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\|SQUASHFS\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.js[mx]?\' . javascript-mode) (\.har\' . javascript-mode) (\.json\' . js-json-mode) (\.[ds]?va?h?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) (\.erts\' . erts-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|EPUB\|CBZ\|FB2\|O?XPS\|DVI\|OD[FGPST]\|DOCX\|XLSX?\|PPTX?\|pdf\|epub\|cbz\|fb2\|o?xps\|djvu\|dvi\|od[fgpst]\|docx\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (/\.?\(authinfo\|netrc\)\' . authinfo-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (/\.redshift\.conf\' . conf-windows-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.mailmap\' . conf-unix-mode) (/\.\(?:asound\|enigma\|fetchmail\|gltron\|gtk\|hxplayer\|mairix\|mbsync\|msmtp\|net\|neverball\|nvidia-settings-\|offlineimap\|qt/.+\|realplayer\|reportbug\|rtorrent\.\|screen\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|mpdconf\|notmuch-config\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.art\' . image-mode) (\.avs\' . image-mode) (\.bmp\' . image-mode) (\.cmyk\' . image-mode) (\.cmyka\' . image-mode) (\.crw\' . image-mode) (\.dcr\' . image-mode) (\.dcx\' . image-mode) (\.dng\' . image-mode) (\.dpx\' . image-mode) (\.fax\' . image-mode) (\.heic\' . image-mode) (\.hrz\' . image-mode) (\.icb\' . image-mode) (\.icc\' . image-mode) (\.icm\' . image-mode) (\.ico\' . image-mode) (\.icon\' . image-mode) (\.jbg\' . image-mode) (\.jbig\' . image-mode) (\.jng\' . image-mode) (\.jnx\' . image-mode) (\.miff\' . image-mode) (\.mng\' . image-mode) (\.mvg\' . image-mode) (\.otb\' . image-mode) (\.p7\' . image-mode) (\.pcx\' . image-mode) (\.pdb\' . image-mode) (\.pfa\' . image-mode) (\.pfb\' . image-mode) (\.picon\' . image-mode) (\.pict\' . image-mode) (\.rgb\' . image-mode) (\.rgba\' . image-mode) (\.tga\' . image-mode) (\.wbmp\' . image-mode) (\.webp\' . image-mode) (\.wmf\' . image-mode) (\.wpg\' . image-mode) (\.xcf\' . image-mode) (\.xmp\' . image-mode) (\.xwd\' . image-mode) (\.yuv\' . image-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode))
 
 ** Co-pilot
 
 We should try and use co-pilot via emacs [[https://www.irfanhabib.com/2022-04-26-setting-up-github-copilot-in-emacs/][tutorial]]
+# #+begin_src emacs-lisp
+#   (use-package copilot
+#   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+#   :ensure t
+# ;; you can utilize :map :hook and :config to customize copilot
+#   :config
+#   (add-hook 'prog-mode-hook 'copilot-mode)
+#   )
+# #+end_src
 
-#+begin_src emacs-lisp
-  (use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-  :ensure t
-;; you can utilize :map :hook and :config to customize copilot
-  :config
-  (add-hook 'prog-mode-hook 'copilot-mode)
-  )
-#+end_src
+# #+begin_src emacs-lisp
+#   (defun my/copilot-tab ()
+#   (interactive)
+#   (or (copilot-accept-completion)
+#       (indent-for-tab-command)))
 
-
-#+RESULTS:
-: t
-
-#+begin_src emacs-lisp
-  (defun my/copilot-tab ()
-  (interactive)
-  (or (copilot-accept-completion)
-      (indent-for-tab-command)))
-
-(with-eval-after-load 'copilot
-   (define-key copilot-mode-map (kbd "<tab>") #'my/copilot-tab))
-#+end_src
+# (with-eval-after-load 'copilot
+#    (define-key copilot-mode-map (kbd "<tab>") #'my/copilot-tab))
+# #+end_src
 
 #+RESULTS:
 : my/copilot-tab
+
+#+begin_src emacs-lisp
+  (use-package jsonrpc)
+  #+end_src
+
+  #+RESULTS:
+
+#+begin_src emacs-lisp
+  (use-package copilot
+    :vc (:url "https://github.com/copilot-emacs/copilot.el"
+              :rev :newest
+              :branch "main"))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+  (add-hook 'prog-mode-hook 'copilot-mode)
+#+end_src
+
+#+RESULTS:
+| copilot-mode |
+
+
 
 ** JSON
 
@@ -1165,26 +1259,15 @@ standard in emacs now
 
 ** Tree sitter packages
 
-   These have been incorporated into emacs 29, but not yet supported by ts-fold
-
-      #+begin_src emacs-lisp
-     (straight-use-package 'tree-sitter)
-     (straight-use-package 'tree-sitter-langs)
-        #+end_src
-
-        #+RESULTS:
-        : t
-
-
 *** ts-fold
 
     This seems to be the best folding setup.
 
-    #+begin_src emacs-lisp
-      (use-package ts-fold
-        :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
-        )
-    #+end_src
+    # #+begin_src emacs-lisp
+    #   (use-package ts-fold
+    #     :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
+    #     )
+    # #+end_src
 
 
 **** Keystrokes
@@ -1207,7 +1290,6 @@ programming, it allows for multiple languages to be added to SRC blocks.
 
 #+begin_src emacs-lisp
   ;;  (use-package gnuplot)
-    (use-package ob-http)
 
     (org-babel-do-load-languages
      'org-babel-load-languages

@@ -12,9 +12,9 @@
 ;; fresh installation! So we'll want to update the package repository and
 ;; install use-package before loading the literate configuration.
 
-(when (not (package-installed-p 'use-package))
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (when (not (package-installed-p 'use-package))
+;;   (package-refresh-contents)
+;;   (package-install 'use-package))
 
 ;; Load Personal information
 (let ((me "~/.emacs.d/me.org"))
