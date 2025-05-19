@@ -62,24 +62,6 @@ git clone --recurse-submodules https://github.com/qjhart/.emacs.d.git
 
  #+RESULTS:
 
-** Configure w/ straight.el
-   We also use-package w/ straight as well, co-pilot eg.
-
-#    #+begin_src emacs-lisp
-# (defvar bootstrap-version)
-# (let ((bootstrap-file
-#        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-#       (bootstrap-version 5))
-#   (unless (file-exists-p bootstrap-file)
-#     (with-current-buffer
-#         (url-retrieve-synchronously
-#          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-#          'silent 'inhibit-cookies)
-#       (goto-char (point-max))
-#       (eval-print-last-sexp)))
-#   (load bootstrap-file nil 'nomessage))
-# #+end_src
-
 
 ** Custom Auto-generated customizations
  I don't want any customizations stored in my ~init.el~ file, that just
@@ -329,11 +311,13 @@ It's better to use the editorconfig files to set your ending whitespace, tab
 width, etc.  This allows you to play better with other editors or collaborators.
 
 #+BEGIN_SRC emacs-lisp
-(use-package editorconfig
-  :ensure t
-  :delight;;" .ec"
-  :config
-  (editorconfig-mode 1))
+  (use-package editorconfig
+    :ensure t
+    :delight;;" .ec"
+    :config
+    (editorconfig-mode 1)
+;;    (setq editorconfig-exclude-modes '(org-mode))
+    )
 #+END_SRC
 
 #+RESULTS:
@@ -778,6 +762,18 @@ Sometimes, though, I don't wanna wrap text. This toggles wrapping with =C-c q=:
   (global-set-key (kbd "C-c q") 'auto-fill-mode)
 #+END_SRC
 
+** Which-key
+
+See which key is used to complete a command
+#+begin_src emacs-lisp
+  (use-package which-key
+      :config
+      (which-key-mode))
+#+end_src
+
+#+RESULTS:
+: t
+
 ** Helpful
 
 This is an updated help module.  One reason I added it was as a test for a [[*Help transient][Help
@@ -844,6 +840,20 @@ rather than popping open a new one [[https://orgmode.org/manual/Editing-Source-C
     )
   (require 'ox-md)
 #+end_src
+
+
+#+RESULTS:
+
+org-mode can break if the tab-width is changed. See [[https://github.com/doomemacs/doomemacs/issues/7670][this issue]].
+
+#+begin_src emacs-lisp
+;;(add-hook 'org-mode-hook
+;;  (add-hook 'after-change-major-mode-hook :local
+;;    (setq-local tab-width 8)))
+#+end_src
+
+#+RESULTS:
+
 
 I'd like the initial scratch buffer to be in Org:
 #+begin_src emacs-lisp
@@ -1043,11 +1053,6 @@ I've turned off global flychecking mode, to better test eglot as a checker.
  # ;; (use-package dap-mode)
  # ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
- # ;; optional if you want which-key integration
- # (use-package which-key
- #     :config
- #     (which-key-mode))
- # #+end_src
 
  #+RESULTS:
  : t
@@ -1263,11 +1268,14 @@ standard in emacs now
 
     This seems to be the best folding setup.
 
-    # #+begin_src emacs-lisp
-    #   (use-package ts-fold
-    #     :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold")
-    #     )
-    # #+end_src
+    #+begin_src emacs-lisp
+      (use-package ts-fold
+        :vc (:url "https://github.com/emacs-tree-sitter/ts-fold"
+                  :rev :newest
+                  :branch "master"))
+    #+end_src
+
+    #+RESULTS:
 
 
 **** Keystrokes
@@ -1356,13 +1364,14 @@ Associate the "dot" language with the =graphviz-dot= major mode.
 #+end_src
 
 #+RESULTS:
+| use-package | transient/:catch: Symbol’s value as variable is void: _ | :error | nil |
 
 ** Code Folding
 
    I'm building this out myself
 
     #+begin_src emacs-lisp
-      (transient-define-prefix ts-fold-transient()
+      (transient-define-prefix ts-fold-transient ()
        "Program folding"
        ["Folding Commands"
         ("c" "close" ts-fold-close)
